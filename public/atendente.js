@@ -42,6 +42,9 @@ function conectar() {
     } else if (msg.tipo === 'senha-entregue') {
       senhas = senhas.filter(s => s.id !== msg.senha.id);
       renderSenhas();
+    } else if (msg.tipo === 'senhas-zeradas') {
+      senhas = [];
+      renderSenhas();
     } else if (msg.tipo === 'categoria-alterada' || msg.tipo === 'item-alterado') {
       carregarCardapio();
     }

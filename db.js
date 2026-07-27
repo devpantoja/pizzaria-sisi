@@ -46,6 +46,10 @@ const stmts = {
   reabrir: db.prepare(
     `UPDATE senhas SET status = 'preparando', pronta_em = NULL WHERE id = ? AND status = 'pronto'`
   ),
+  // Zerar: apaga todas as senhas do dia atual (contador volta pra 01)
+  // Pedidos e itens caem em cascata via FK ON DELETE CASCADE.
+  apagarSenhasDoDia: db.prepare(`DELETE FROM senhas WHERE dia = ?`),
+  contarSenhasDoDia: db.prepare(`SELECT COUNT(*) as n FROM senhas WHERE dia = ?`),
 };
 
 export function criarSenha() {
@@ -75,6 +79,13 @@ export function reabrir(id) {
   const info = stmts.reabrir.run(id);
   if (info.changes === 0) return null;
   return stmts.buscarPorId.get(id);
+}
+
+export function zerarSenhasDoDia() {
+  const dia = hoje();
+  const antes = stmts.contarSenhasDoDia.get(dia).n;
+  const info = stmts.apagarSenhasDoDia.run(dia);
+  return { dia, apagadas: info.changes, antes };
 }
 
 export default db;

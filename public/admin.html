@@ -390,13 +390,34 @@
     </div>
   </div>
 
-  <div style="background: var(--cinza-100); border: 1px solid var(--cinza-200); border-radius: 12px; padding: 20px; font-size: 13px; color: var(--cinza-700); line-height: 1.6;">
+  <div style="background: var(--cinza-100); border: 1px solid var(--cinza-200); border-radius: 12px; padding: 20px; font-size: 13px; color: var(--cinza-700); line-height: 1.6; margin-bottom: 16px;">
     <strong style="color: var(--primaria);">Sobre atualizações.</strong>
     O sistema verifica automaticamente novas versões a cada 6 horas.
     Quando uma nova versão for lançada pela CodeGus, aparecerá um botão de instalação nesta tela.
     Você pode também verificar manualmente a qualquer momento.
     <br><br>
     Durante a atualização, o sistema fica indisponível por alguns segundos enquanto reinicia.
+  </div>
+
+  <!-- Zona perigosa: zerar senhas -->
+  <div style="background: white; border: 2px solid #fca5a5; border-radius: 12px; padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+      <div style="flex: 1;">
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--acento); font-weight: 700; margin-bottom: 6px;">Zona de risco</div>
+        <div style="font-size: 16px; font-weight: 700; color: var(--primaria); margin-bottom: 4px;">Zerar senhas do dia</div>
+        <div style="font-size: 12px; color: var(--cinza-500); line-height: 1.5;">
+          Remove todas as senhas ativas (em preparação e prontas) e volta o contador para 01.
+          <br>
+          Útil no meio do dia (ex: fim do almoço, começar o jantar com senha 01).
+          <br>
+          <strong style="color: var(--cinza-700);">O histórico de vendas do dia continua no Relatório.</strong>
+        </div>
+      </div>
+      <button class="btn" onclick="zerarSenhas()" id="btnZerar"
+        style="background: var(--acento); color: white; white-space: nowrap;">
+        Zerar senhas
+      </button>
+    </div>
   </div>
 </div>
 

@@ -136,6 +136,9 @@ function conectar() {
     } else if (msg.tipo === 'senha-entregue') {
       senhas = senhas.filter(s => s.id !== msg.senha.id);
       if (ultimaProntaId === msg.senha.id) ultimaProntaId = null;
+    } else if (msg.tipo === 'senhas-zeradas') {
+      senhas = [];
+      ultimaProntaId = null;
     } else if (msg.tipo === 'propaganda-alterada' || msg.tipo === 'config-alterada') {
       carregarPropagandas();
     }

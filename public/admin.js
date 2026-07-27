@@ -509,6 +509,22 @@ window.checarVersao = async function() {
   }
 };
 
+window.zerarSenhas = async function() {
+  if (!confirm('Zerar TODAS as senhas ativas e voltar o contador para 01?\n\nO histórico do dia continua no Relatório, mas as senhas em preparação e prontas somem do painel.')) return;
+  const btn = $('btnZerar');
+  btn.disabled = true;
+  btn.textContent = 'Zerando…';
+  try {
+    const r = await api('POST', '/api/senhas/zerar');
+    toast(`${r.apagadas} senha(s) removida(s). Próxima começa em 01.`, 'sucesso');
+  } catch (e) {
+    toast('Erro: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Zerar senhas';
+  }
+};
+
 window.aplicarAtualizacao = async function() {
   if (!confirm('Atualizar agora? O sistema ficará indisponível por alguns segundos.')) return;
   const btn = $('btnAplicar');

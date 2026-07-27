@@ -4,7 +4,7 @@ import { WebSocketServer } from 'ws';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { networkInterfaces } from 'node:os';
-import { criarSenha, listarAtivas, marcarPronta, marcarEntregue, reabrir } from './db.js';
+import { criarSenha, listarAtivas, marcarPronta, marcarEntregue, reabrir, zerarSenhasDoDia } from './db.js';
 import {
   listarCategorias, criarCategoria, atualizarCategoria, apagarCategoria,
   listarItens, buscarItem, criarItem, atualizarItem, toggleDisponivel, apagarItem,
@@ -83,6 +83,13 @@ app.post('/api/senhas/:id/reabrir', (req, res) => {
   if (!senha) return res.status(404).json({ erro: 'senha não pode ser reaberta' });
   broadcast({ tipo: 'senha-reaberta', senha });
   res.json(senha);
+});
+
+// Zera todas as senhas do dia (contador volta pra 01)
+app.post('/api/senhas/zerar', (req, res) => {
+  const r = zerarSenhasDoDia();
+  broadcast({ tipo: 'senhas-zeradas', ...r });
+  res.json(r);
 });
 
 // ============= Pedidos =============
