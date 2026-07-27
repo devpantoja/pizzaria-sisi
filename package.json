@@ -1,0 +1,23 @@
+{
+  "name": "pizzaria-senhas",
+  "version": "0.1.0",
+  "description": "Sistema de senhas de atendimento para pizzaria — CodeGus",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.5.0",
+    "express": "^4.21.1",
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "playwright": "^1.62.0"
+  }
+}

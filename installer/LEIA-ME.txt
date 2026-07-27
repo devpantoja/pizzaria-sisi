@@ -1,0 +1,68 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                                                                  ║
+║              SISI PIZZERIA — Sistema de Senhas                   ║
+║                     Desenvolvido por CodeGus                     ║
+║                                                                  ║
+╚══════════════════════════════════════════════════════════════════╝
+
+COMO INSTALAR
+─────────────
+
+  1. Dê duplo-clique em "SisiPizzeria-Setup.exe"
+  2. Clique "Sim" quando o Windows perguntar se pode instalar
+  3. Siga o assistente (Avançar > Avançar > Instalar)
+  4. Marque "Iniciar automaticamente ao ligar o computador"
+     (recomendado)
+  5. Ao final, clique "Concluir"
+     → O sistema abre sozinho no seu navegador
+
+
+PRIMEIRO USO
+────────────
+
+  Cadastre o cardápio antes de começar:
+
+  1. Vá em "Cardápio" no menu do sistema
+  2. Crie categorias (Pizzas Salgadas, Bebidas...)
+  3. Adicione itens com tamanhos e preços
+  4. Volte pra tela do Atendente e comece a operar
+
+  ↳ Consulte o Manual (também instalado no Menu Iniciar)
+     pra ver o passo a passo com prints de cada tela.
+
+
+TELA DA TV (PAINEL)
+───────────────────
+
+  Pra usar num TV do salão:
+
+  1. Conecte a TV ao computador por HDMI
+     (ou use um mini-PC / Fire TV Stick com navegador)
+  2. Abra o navegador na TV
+  3. Digite o endereço: http://localhost:3000/painel
+  4. Aperte F11 pra tela cheia
+  5. Pronto — deixa aberto o dia inteiro
+
+
+PRECISA DE AJUDA?
+─────────────────
+
+  🌐  codegus.com
+  📱  (47) 98496-5787
+
+  Manual completo instalado em:
+  Menu Iniciar > Sisi Pizzeria > Manual
+
+
+ATUALIZAÇÕES
+────────────
+
+  O sistema verifica automaticamente novas versões.
+  Quando houver atualização, aparecerá um botão em:
+  Cardápio > Sistema > Atualizar agora
+
+  Sempre feche o navegador antes de atualizar.
+
+
+                    © 2026 CodeGus
+                    codegus.com

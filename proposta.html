@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>CodeGus — Proposta: Sistema de Cardápio e Senhas</title>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  /* Uma A4 tem 210mm x 297mm. Cada .secao vira uma caixa desse tamanho
+     e no print isso vira exatamente uma página. */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  :root {
+    --primaria: #0f172a;
+    --primaria-clara: #1e293b;
+    --acento: #dc2626;
+    --acento-escuro: #991b1b;
+    --acento-claro: #fef2f2;
+    --dourado: #d97706;
+    --dourado-claro: #fef3c7;
+    --verde: #059669;
+    --cinza-100: #f8fafc;
+    --cinza-200: #e2e8f0;
+    --cinza-300: #cbd5e1;
+    --cinza-500: #64748b;
+    --cinza-700: #334155;
+    --cinza-900: #0f172a;
+    --branco: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--cinza-900);
+    line-height: 1.5;
+    font-size: 10.5pt;
+    background: #e2e8f0;
+  }
+
+  /* ============================================================
+     Cada .secao é uma folha A4 fixa (210mm × 297mm).
+     Como o tamanho é fixo, o que couber cabe — não há quebras
+     inesperadas. Se algo passar do limite, aparece o overflow
+     na tela e dá pra ajustar antes de imprimir.
+     ============================================================ */
+  .secao {
+    width: 210mm;
+    height: 297mm;
+    padding: 14mm 15mm 22mm 15mm;
+    margin: 0 auto 20px;
+    background: white;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.12);
+    position: relative;
+    overflow: hidden;
+  }
+  .secao > .conteudo { }
+  .secao > .rodape-pagina {
+    position: absolute;
+    left: 15mm;
+    right: 15mm;
+    bottom: 10mm;
+    padding-top: 8px;
+    border-top: 1px solid var(--cinza-200);
+    display: flex;
+    justify-content: space-between;
+    font-size: 8.5pt;
+    color: var(--cinza-500);
+  }
+  .secao > .rodape-pagina .marca {
+    font-weight: 700;
+    color: var(--primaria);
+  }
+
+  /* Cabeçalho de seção (aparece no topo de cada página lógica) */
+  .cabecalho-secao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--cinza-200);
+    margin-bottom: 20px;
+    font-size: 10pt;
+    color: var(--cinza-500);
+  }
+  .cabecalho-secao .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    color: var(--primaria);
+    font-size: 13pt;
+  }
+  .cabecalho-secao .logo-mark {
+    width: 28px;
+    height: 28px;
+    background: var(--primaria);
+    color: var(--branco);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 11pt;
+  }
+  .cabecalho-secao .meta-header {
+    text-align: right;
+    line-height: 1.3;
+  }
+
+  /* ============================================================
+     Capa
+     ============================================================ */
+  .capa {
+    text-align: center;
+    padding: 40px 0 32px;
+  }
+  .capa .badge-servico {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--acento-claro);
+    color: var(--acento-escuro);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 9pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+  .capa h1 {
+    font-size: 28pt;
+    color: var(--primaria);
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    font-weight: 800;
+  }
+  .capa .subtitulo {
+    font-size: 13pt;
+    color: var(--cinza-500);
+    margin-bottom: 32px;
+    font-weight: 400;
+  }
+  .capa .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    max-width: 560px;
+    margin: 0 auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--cinza-200);
+  }
+  .capa .meta-item { text-align: left; }
+  .capa .meta-item .label {
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--cinza-500);
+    margin-bottom: 3px;
+    font-weight: 600;
+  }
+  .capa .meta-item .valor {
+    font-size: 10pt;
+    color: var(--primaria);
+    font-weight: 600;
+  }
+
+  /* ============================================================
+     Tipografia
+     ============================================================ */
+  h2 {
+    color: var(--primaria);
+    font-size: 16pt;
+    margin: 20px 0 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primaria);
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  .secao > h2:first-of-type,
+  .cabecalho-secao + h2 { margin-top: 0; }
+
+  h2 [data-lucide] {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.2;
+    color: var(--acento);
+  }
+
+  h3 {
+    font-size: 12pt;
+    color: var(--primaria);
+    margin: 16px 0 8px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  h3 [data-lucide] {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2.2;
+    color: var(--acento);
+  }
+
+  p { margin-bottom: 8px; color: var(--cinza-700); }
+  ul, ol { margin: 6px 0 12px 18px; color: var(--cinza-700); }
+  li { margin-bottom: 4px; }
+  strong { color: var(--primaria); font-weight: 600; }
+
+  /* ============================================================
+     Componentes
+     ============================================================ */
+  .destaque {
+    background: var(--dourado-claro);
+    border-left: 4px solid var(--dourado);
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 4px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .destaque [data-lucide] {
+    width: 18px;
+    height: 18px;
+    color: var(--dourado);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .caixa-info {
+    background: var(--cinza-100);
+    border-left: 4px solid var(--primaria);
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 4px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .caixa-info [data-lucide] {
+    width: 18px;
+    height: 18px;
+    color: var(--primaria);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 12px 0;
+  }
+
+  .card {
+    border: 1px solid var(--cinza-200);
+    border-radius: 8px;
+    padding: 16px;
+    background: var(--branco);
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .card h3 { margin-top: 0; }
+  .card .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--primaria);
+    color: var(--branco);
+    font-size: 8pt;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: auto;
+  }
+
+  .card-mini {
+    border: 1px solid var(--cinza-200);
+    border-radius: 8px;
+    padding: 12px;
+    background: var(--branco);
+    text-align: center;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .card-mini [data-lucide] {
+    width: 22px;
+    height: 22px;
+    color: var(--acento);
+    margin-bottom: 4px;
+  }
+  .card-mini h4 {
+    font-size: 10pt;
+    color: var(--primaria);
+    margin-bottom: 3px;
+    font-weight: 700;
+  }
+  .card-mini p {
+    font-size: 8.5pt;
+    color: var(--cinza-500);
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  /* ============================================================
+     Painel mock
+     ============================================================ */
+  .painel-mock {
+    background: linear-gradient(135deg, var(--primaria) 0%, var(--primaria-clara) 100%);
+    color: var(--branco);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 14px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .painel-mock .coluna { text-align: center; }
+  .painel-mock .coluna h4 {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    opacity: 0.6;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .painel-mock .coluna h4 [data-lucide] { width: 12px; height: 12px; }
+  .painel-mock .coluna.pronto h4 { color: var(--dourado-claro); opacity: 1; }
+  .painel-mock .senhas {
+    font-size: 30pt;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -1px;
+  }
+  .painel-mock .senhas.destacada {
+    color: var(--dourado-claro);
+    font-size: 60pt;
+    font-weight: 900;
+  }
+  .painel-mock.com-ad { padding-bottom: 12px; }
+  .painel-mock .barra-ad {
+    grid-column: 1 / -1;
+    margin: 20px -24px -24px;
+    padding: 10px 20px;
+    background: var(--acento);
+    color: var(--branco);
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8.5pt;
+  }
+  .painel-mock .barra-ad .marca-ad {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+  }
+  .painel-mock .barra-ad .marca-ad .selo {
+    width: 22px;
+    height: 22px;
+    background: var(--branco);
+    color: var(--acento);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 9pt;
+  }
+  .painel-mock .barra-ad .contato-ad {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0.95;
+  }
+
+  /* Slide de propaganda em tela cheia */
+  .slide-ad-mock {
+    background: linear-gradient(135deg, var(--acento) 0%, var(--acento-escuro) 100%);
+    color: var(--branco);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 14px 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: center;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .slide-ad-mock .selo-grande {
+    width: 44px;
+    height: 44px;
+    background: var(--branco);
+    color: var(--acento);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 14pt;
+    margin-bottom: 10px;
+  }
+  .slide-ad-mock h4 {
+    font-size: 20pt;
+    font-weight: 800;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+  .slide-ad-mock .tag-slide {
+    font-size: 11pt;
+    opacity: 0.9;
+    margin-bottom: 10px;
+  }
+  .slide-ad-mock .contato-slide {
+    font-size: 10pt;
+    opacity: 0.95;
+    line-height: 1.6;
+  }
+  .slide-ad-mock .contato-slide [data-lucide] {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    vertical-align: -2px;
+    margin-right: 4px;
+  }
+  .slide-ad-mock .qr-fake {
+    width: 90px;
+    height: 90px;
+    background: var(--branco);
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 2px;
+    padding: 8px;
+  }
+  .slide-ad-mock .qr-fake span {
+    background: var(--primaria);
+    border-radius: 1px;
+  }
+  .slide-ad-mock .qr-fake span.branco { background: transparent; }
+  .legenda-mock {
+    text-align: center;
+    font-style: italic;
+    color: var(--cinza-500);
+    font-size: 9pt;
+    margin-top: -6px;
+  }
+
+  /* ============================================================
+     Cardápio mock
+     ============================================================ */
+  .cardapio-mock {
+    border: 1px solid var(--cinza-200);
+    border-radius: 12px;
+    padding: 16px;
+    background: var(--cinza-100);
+    margin: 12px 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .cardapio-mock .cat-titulo {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--acento);
+    font-weight: 700;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--acento-claro);
+  }
+  .cardapio-mock .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--cinza-200);
+  }
+  .cardapio-mock .item:last-child { border-bottom: none; }
+  .cardapio-mock .item .nome {
+    font-weight: 600;
+    color: var(--primaria);
+    font-size: 10pt;
+  }
+  .cardapio-mock .item .desc {
+    font-size: 8.5pt;
+    color: var(--cinza-500);
+    display: block;
+    margin-top: 2px;
+    font-weight: 400;
+  }
+  .cardapio-mock .item .preco {
+    font-weight: 700;
+    color: var(--verde);
+    font-size: 10pt;
+  }
+  .cardapio-mock .item .esgotado {
+    background: var(--cinza-500);
+    color: var(--branco);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .cardapio-mock .item.indisponivel .nome {
+    color: var(--cinza-500);
+    text-decoration: line-through;
+  }
+
+  /* ============================================================
+     Pedido mock
+     ============================================================ */
+  .pedido-mock {
+    background: var(--branco);
+    border: 2px solid var(--primaria);
+    border-radius: 12px;
+    padding: 14px;
+    margin: 12px 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .pedido-mock .header-pedido {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--cinza-200);
+    margin-bottom: 8px;
+  }
+  .pedido-mock .header-pedido .titulo {
+    font-weight: 700;
+    color: var(--primaria);
+    font-size: 10pt;
+  }
+  .pedido-mock .header-pedido .senha-badge {
+    background: var(--acento);
+    color: var(--branco);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 10pt;
+    letter-spacing: 0.5px;
+  }
+  .pedido-mock .linha {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 10pt;
+    color: var(--cinza-700);
+  }
+  .pedido-mock .linha .qty { color: var(--cinza-500); margin-right: 6px; }
+  .pedido-mock .total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid var(--cinza-200);
+    margin-top: 6px;
+    font-weight: 800;
+    font-size: 11pt;
+    color: var(--primaria);
+  }
+  .pedido-mock .total .valor { color: var(--verde); }
+
+  /* ============================================================
+     Tabelas
+     ============================================================ */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 10pt;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  th, td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--cinza-200);
+  }
+  th {
+    background: var(--primaria);
+    color: var(--branco);
+    font-weight: 600;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tr:nth-child(even) td { background: var(--cinza-100); }
+
+  /* ============================================================
+     Fluxo
+     ============================================================ */
+  .fluxo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 18px 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .fluxo .passo {
+    background: var(--branco);
+    border: 2px solid var(--primaria);
+    color: var(--primaria);
+    padding: 10px 14px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 110px;
+    font-weight: 600;
+    font-size: 9pt;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .fluxo .passo [data-lucide] {
+    width: 18px;
+    height: 18px;
+    color: var(--acento);
+    margin-bottom: 3px;
+  }
+  .fluxo .passo.verde {
+    background: var(--verde);
+    color: var(--branco);
+    border-color: var(--verde);
+  }
+  .fluxo .passo.verde [data-lucide] { color: var(--branco); }
+  .fluxo .seta {
+    color: var(--cinza-300);
+    display: flex;
+    align-items: center;
+  }
+  .fluxo .seta [data-lucide] { width: 18px; height: 18px; }
+
+  /* ============================================================
+     Tags
+     ============================================================ */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--verde);
+    color: var(--branco);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 8pt;
+    font-weight: 600;
+    margin-right: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .tag.opcional { background: var(--cinza-500); }
+  .tag [data-lucide] { width: 10px; height: 10px; }
+
+  /* ============================================================
+     Assinatura
+     ============================================================ */
+  .assinatura {
+    margin-top: 24px;
+    padding: 22px;
+    background: var(--primaria);
+    color: var(--branco);
+    border-radius: 8px;
+    text-align: center;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .assinatura h3 {
+    color: var(--branco);
+    font-size: 15pt;
+    margin-bottom: 6px;
+    justify-content: center;
+  }
+  .assinatura h3 [data-lucide] { color: var(--dourado-claro); }
+  .assinatura p {
+    color: var(--cinza-300);
+    margin-bottom: 12px;
+    font-size: 10pt;
+  }
+  .assinatura .contato {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--primaria-clara);
+  }
+  .assinatura .contato-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9pt;
+    color: var(--branco);
+  }
+  .assinatura .contato-item [data-lucide] {
+    width: 14px;
+    height: 14px;
+    color: var(--dourado-claro);
+  }
+
+  /* ============================================================
+     Barra de controles (só na tela)
+     ============================================================ */
+  .barra-controles {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: var(--primaria);
+    color: var(--branco);
+    padding: 8px 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+  }
+  .barra-controles button {
+    background: var(--acento);
+    color: var(--branco);
+    border: none;
+    padding: 9px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+  }
+  .barra-controles button:hover { background: var(--acento-escuro); }
+  .barra-controles button [data-lucide] { width: 14px; height: 14px; }
+
+  @media print {
+    html, body { background: white; margin: 0; padding: 0; }
+    .barra-controles { display: none !important; }
+    .secao {
+      margin: 0 !important;
+      box-shadow: none !important;
+      width: 210mm;
+      height: 297mm;
+      /* Sem page-break-after: o próprio tamanho fixo de 297mm faz cada .secao
+         ocupar exatamente uma folha A4. Adicionar page-break-after gera folha extra. */
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="barra-controles">
+  <button onclick="window.print()">
+    <i data-lucide="printer"></i>
+    Imprimir / Salvar PDF
+  </button>
+</div>
+
+<!-- ==================== SEÇÃO 1 — CAPA ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo">
+      <div class="logo-mark">CG</div>
+      <div>CodeGus</div>
+    </div>
+    <div class="meta-header">
+      Proposta Técnica<br>
+      <strong>Nº 2026-07-01</strong>
+    </div>
+  </div>
+
+  <div class="capa">
+    <span class="badge-servico">
+      <i data-lucide="sparkles"></i>
+      Desenvolvimento sob medida
+    </span>
+    <h1>Sistema de Cardápio<br>e Senhas de Atendimento</h1>
+    <div class="subtitulo">Gestão de pedidos e painel de acompanhamento para pizzaria</div>
+
+    <div class="meta-grid">
+      <div class="meta-item">
+        <div class="label">Cliente</div>
+        <div class="valor">Sisi Pizzeria</div>
+        <div style="font-size: 9pt; color: var(--cinza-500); margin-top: 2px; font-weight: 400;">a/c Fernanda Garcia</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Preparado por</div>
+        <div class="valor">CodeGus</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Data</div>
+        <div class="valor">27 de julho de 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <h2><i data-lucide="target"></i> Visão geral</h2>
+  <p>
+    A CodeGus propõe o desenvolvimento de uma solução integrada composta por dois módulos
+    complementares: um <strong>Cardápio Digital</strong>, onde o atendente monta o pedido
+    escolhendo os itens diretamente na tela, e um <strong>Painel de Senhas</strong>, que
+    acompanha o pedido do balcão à entrega — no mesmo modelo consagrado por redes como
+    <em>Girafas</em>.
+  </p>
+  <p>
+    Ao finalizar o pedido, o sistema <strong>gera a senha automaticamente</strong> e ela é
+    exibida na TV do salão em "Em Preparação". Quando a pizza fica pronta, a senha é
+    promovida para "Pronto" em destaque, permitindo que o cliente identifique a chamada
+    de qualquer ponto do estabelecimento.
+  </p>
+
+  <div class="destaque">
+    <i data-lucide="rocket"></i>
+    <div>
+      <strong>Objetivo do MVP.</strong> Entregar uma solução funcional em ~1 semana,
+      operando de forma independente da internet, sem apps para o cliente instalar
+      e sem custos recorrentes. Roda no computador da pizzaria, com projeção para a TV do salão.
+    </div>
+  </div>
+
+  <h2><i data-lucide="package"></i> Módulos entregues</h2>
+  <div class="grid-3">
+    <div class="card-mini">
+      <i data-lucide="book-open"></i>
+      <h4>Cardápio Digital</h4>
+      <p>Cadastro e gestão de itens, tamanhos, sabores e disponibilidade</p>
+    </div>
+    <div class="card-mini">
+      <i data-lucide="shopping-cart"></i>
+      <h4>Montagem de Pedido</h4>
+      <p>Atendente monta o pedido com poucos cliques e gera a senha</p>
+    </div>
+    <div class="card-mini">
+      <i data-lucide="tv"></i>
+      <h4>Painel de Senhas</h4>
+      <p>TV do salão com atualização automática em tempo real</p>
+    </div>
+  </div>
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 1 de 9</div>
+  </div>
+</section>
+
+<!-- ==================== SEÇÃO 2 — CARDÁPIO ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo">
+      <div class="logo-mark">CG</div>
+      <div>CodeGus</div>
+    </div>
+    <div class="meta-header">
+      Módulo 1 de 3<br>
+      <strong>Cardápio Digital</strong>
+    </div>
+  </div>
+
+  <h2><i data-lucide="book-open"></i> Módulo Cardápio Digital</h2>
+  <p>
+    Base de dados dos produtos da pizzaria, gerenciada pelo próprio estabelecimento.
+    O cardápio alimenta a montagem de pedidos e mantém preços e disponibilidade sempre atualizados.
+  </p>
+
+  <h3><i data-lucide="settings-2"></i> Recursos do cardápio</h3>
+  <div class="grid-2">
+    <div class="card">
+      <h3><i data-lucide="pencil"></i> Cadastro de itens</h3>
+      <ul>
+        <li><strong>Nome</strong> do produto</li>
+        <li><strong>Preço</strong> (por tamanho, quando aplicável)</li>
+        <li><strong>Categoria</strong> (salgadas, doces, bebidas, sobremesas)</li>
+        <li><strong>Descrição</strong> curta dos ingredientes</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><i data-lucide="pizza"></i> Tamanhos e sabores</h3>
+      <ul>
+        <li>Múltiplos <strong>tamanhos</strong> (broto, média, grande, família)</li>
+        <li>Pizza <strong>meia a meia</strong> (½ + ½ sabor)</li>
+        <li><strong>Adicionais</strong> (borda recheada, extra queijo)</li>
+        <li>Cálculo automático do preço final</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><i data-lucide="power"></i> Disponibilidade</h3>
+      <ul>
+        <li>Marcar item como <strong>esgotado</strong> com um clique</li>
+        <li>Item indisponível some da tela do atendente</li>
+        <li>Reativar quando ingrediente voltar</li>
+        <li>Sem precisar apagar e recadastrar</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><i data-lucide="folder-tree"></i> Organização</h3>
+      <ul>
+        <li>Agrupamento por <strong>categoria</strong></li>
+        <li>Busca rápida pelo nome</li>
+        <li>Reordenação dos itens mais vendidos</li>
+        <li>Base pronta para relatórios futuros</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3><i data-lucide="eye"></i> Prévia do cardápio</h3>
+  <div class="cardapio-mock">
+    <div class="cat-titulo">Pizzas Salgadas</div>
+    <div class="item">
+      <div>
+        <div class="nome">Margherita</div>
+        <span class="desc">Molho, mussarela, tomate, manjericão</span>
+      </div>
+      <div class="preco">R$ 49,90</div>
+    </div>
+    <div class="item">
+      <div>
+        <div class="nome">Calabresa</div>
+        <span class="desc">Molho, mussarela, calabresa, cebola</span>
+      </div>
+      <div class="preco">R$ 52,90</div>
+    </div>
+    <div class="item indisponivel">
+      <div>
+        <div class="nome">Portuguesa</div>
+        <span class="desc">Presunto, ovo, cebola, azeitona</span>
+      </div>
+      <div><span class="esgotado">Esgotado</span></div>
+    </div>
+    <div class="item">
+      <div>
+        <div class="nome">Quatro Queijos</div>
+        <span class="desc">Mussarela, provolone, parmesão, gorgonzola</span>
+      </div>
+      <div class="preco">R$ 58,90</div>
+    </div>
+  </div>
+  <p class="legenda-mock">
+    Simulação — o atendente vê o cardápio organizado por categoria, com preços e itens esgotados destacados.
+  </p>
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 2 de 9</div>
+  </div>
+</section>
+
+<!-- ==================== SEÇÃO 3 — MONTAGEM + PAINEL ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo">
+      <div class="logo-mark">CG</div>
+      <div>CodeGus</div>
+    </div>
+    <div class="meta-header">
+      Módulos 2 e 3 de 3<br>
+      <strong>Montagem do Pedido e Painel</strong>
+    </div>
+  </div>
+
+  <h2><i data-lucide="workflow"></i> Fluxo operacional completo</h2>
+  <div class="fluxo">
+    <div class="passo">
+      <i data-lucide="user"></i>
+      Cliente<br>faz pedido
+    </div>
+    <div class="seta"><i data-lucide="chevron-right"></i></div>
+    <div class="passo">
+      <i data-lucide="book-open"></i>
+      Atendente<br>escolhe itens
+    </div>
+    <div class="seta"><i data-lucide="chevron-right"></i></div>
+    <div class="passo">
+      <i data-lucide="ticket"></i>
+      Sistema gera<br>senha
+    </div>
+    <div class="seta"><i data-lucide="chevron-right"></i></div>
+    <div class="passo">
+      <i data-lucide="tv"></i>
+      Senha entra<br>no painel
+    </div>
+    <div class="seta"><i data-lucide="chevron-right"></i></div>
+    <div class="passo verde">
+      <i data-lucide="check-circle-2"></i>
+      Pronto →<br>cliente retira
+    </div>
+  </div>
+
+  <h2><i data-lucide="shopping-cart"></i> Módulo Montagem de Pedido</h2>
+  <p>
+    Tela do atendente onde o pedido é construído em tempo real. A cada item adicionado, o
+    sistema atualiza o total. Ao finalizar, uma <strong>senha é gerada automaticamente</strong>
+    e o pedido é enviado ao painel da TV.
+  </p>
+
+  <div class="pedido-mock">
+    <div class="header-pedido">
+      <div class="titulo">Pedido em andamento</div>
+      <div class="senha-badge">SENHA 42</div>
+    </div>
+    <div class="linha">
+      <div><span class="qty">1×</span> Pizza Calabresa (Grande)</div>
+      <div>R$ 52,90</div>
+    </div>
+    <div class="linha">
+      <div><span class="qty">1×</span> Pizza Margherita (Média)</div>
+      <div>R$ 42,90</div>
+    </div>
+    <div class="linha">
+      <div><span class="qty">2×</span> Coca-Cola 350ml</div>
+      <div>R$ 12,00</div>
+    </div>
+    <div class="total">
+      <div>Total</div>
+      <div class="valor">R$ 107,80</div>
+    </div>
+  </div>
+  <p class="legenda-mock">
+    Simulação — atendente escolhe itens do cardápio, total é calculado, senha gerada ao confirmar.
+  </p>
+
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 3 de 9</div>
+  </div>
+</section>
+
+<!-- ==================== SEÇÃO 3B — PAINEL DA TV ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo">
+      <div class="logo-mark">CG</div>
+      <div>CodeGus</div>
+    </div>
+    <div class="meta-header">
+      Módulo 3 de 3<br>
+      <strong>Painel da TV</strong>
+    </div>
+  </div>
+
+  <h2><i data-lucide="tv"></i> Módulo Painel da TV</h2>
+  <p>
+    Interface projetada em tela cheia na TV do salão. Duas colunas visíveis de qualquer
+    ponto do estabelecimento: <strong>Em Preparação</strong> e <strong>Pronto</strong>.
+    A senha pronta ganha destaque ampliado, com atualização em tempo real e sem
+    necessidade de recarregar a página.
+  </p>
+
+  <div class="painel-mock com-ad">
+    <div class="coluna">
+      <h4><i data-lucide="clock"></i> Em Preparação</h4>
+      <div class="senhas">
+        43 &nbsp; 44 &nbsp; 45<br>
+        46 &nbsp; 47
+      </div>
+    </div>
+    <div class="coluna pronto">
+      <h4><i data-lucide="bell"></i> Pronto</h4>
+      <div class="senhas destacada">42</div>
+    </div>
+    <div class="barra-ad">
+      <div class="marca-ad">
+        <div class="selo">CG</div>
+        Desenvolvido por CodeGus — Sistemas sob medida
+      </div>
+      <div class="contato-ad">codegus.com &nbsp;·&nbsp; (47) 98496-5787</div>
+    </div>
+  </div>
+  <p class="legenda-mock">
+    Simulação — senha pronta em destaque + barra fixa CodeGus no rodapé
+    (contrapartida do sistema gratuito).
+  </p>
+
+  <h3><i data-lucide="lightbulb"></i> Características do painel</h3>
+  <div class="grid-2">
+    <div class="card">
+      <h3><i data-lucide="maximize-2"></i> Legibilidade</h3>
+      <ul>
+        <li>Números grandes, visíveis de longe</li>
+        <li>Contraste elevado (fundo escuro, texto claro)</li>
+        <li>Senha pronta com destaque dourado ampliado</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><i data-lucide="zap"></i> Atualização automática</h3>
+      <ul>
+        <li>Sincronização em tempo real via WebSocket</li>
+        <li>Sem recarregar a página</li>
+        <li>Reconexão automática se a rede oscilar</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 4 de 9</div>
+  </div>
+</section>
+
+<!-- ==================== SEÇÃO 4B — MÓDULO PROPAGANDA ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo">
+      <div class="logo-mark">CG</div>
+      <div>CodeGus</div>
+    </div>
+    <div class="meta-header">
+      Módulo Adicional<br>
+      <strong>Espaço de divulgação CodeGus</strong>
+    </div>
+  </div>
+
+  <h2><i data-lucide="megaphone"></i> Módulo de Propaganda</h2>
+  <p>
+    O sistema inclui um módulo dedicado à exibição de divulgação da CodeGus no painel
+    da TV — contrapartida do modelo gratuito. Foi desenhado para ser
+    <strong>discreto e não interferir</strong> na operação da pizzaria.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3><i data-lucide="layout-panel-top"></i> Barra fixa</h3>
+      <p style="font-size: 9.5pt; margin-bottom: 6px;">
+        Faixa permanente no rodapé da TV (já visível no mock da página anterior).
+        Não sobrepõe as senhas.
+      </p>
+      <ul style="font-size: 9.5pt;">
+        <li>Logo + tagline + contato CodeGus</li>
+        <li>Presente 100% do tempo</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><i data-lucide="play-circle"></i> Slide periódico</h3>
+      <p style="font-size: 9.5pt; margin-bottom: 6px;">
+        A cada ~5 minutos, tela cheia com material institucional por 8–15 segundos,
+        depois volta automaticamente para as senhas.
+      </p>
+      <ul style="font-size: 9.5pt;">
+        <li>Pausa se houver senha nova entrando</li>
+        <li>Sem áudio</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3><i data-lucide="eye"></i> Prévia do slide de propaganda</h3>
+  <div class="slide-ad-mock">
+    <div>
+      <div class="selo-grande">CG</div>
+      <h4>CodeGus</h4>
+      <div class="tag-slide">Sistemas sob medida para o seu negócio</div>
+      <div class="contato-slide">
+        <i data-lucide="globe"></i> codegus.com<br>
+        <i data-lucide="phone"></i> (47) 98496-5787<br>
+        <i data-lucide="qr-code"></i> Aponte a câmera do celular
+      </div>
+    </div>
+    <div class="qr-fake" aria-hidden="true">
+      <span></span><span></span><span class="branco"></span><span></span><span class="branco"></span><span></span>
+      <span class="branco"></span><span></span><span></span><span class="branco"></span><span></span><span class="branco"></span>
+      <span></span><span class="branco"></span><span></span><span></span><span class="branco"></span><span></span>
+      <span class="branco"></span><span></span><span class="branco"></span><span></span><span></span><span class="branco"></span>
+      <span></span><span class="branco"></span><span></span><span class="branco"></span><span></span><span></span>
+      <span></span><span></span><span class="branco"></span><span></span><span></span><span class="branco"></span>
+    </div>
+  </div>
+
+  <div class="caixa-info">
+    <i data-lucide="shield-check"></i>
+    <div>
+      <strong>Limites do módulo.</strong> Sem áudio. Propagandas de terceiros são
+      permitidas, exceto do <strong>setor de tecnologia</strong> (para não competir com
+      a marca CodeGus). Conteúdo pode ser atualizado remotamente sem visita à pizzaria.
+    </div>
+  </div>
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 5 de 9</div>
+  </div>
+</section>
+
+<!-- ==================== SEÇÃO 4 — TÉCNICO ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo">
+      <div class="logo-mark">CG</div>
+      <div>CodeGus</div>
+    </div>
+    <div class="meta-header">
+      Especificação Técnica<br>
+      <strong>Arquitetura e infraestrutura</strong>
+    </div>
+  </div>
+
+  <h2><i data-lucide="cpu"></i> Arquitetura da solução</h2>
+  <p>
+    Um servidor <strong>Node.js</strong> leve roda no computador da pizzaria (ou em um Raspberry Pi).
+    A tela do atendente, o administrador do cardápio e o painel da TV se conectam a ele pela rede
+    WiFi local. Alterações são propagadas <strong>instantaneamente</strong> via WebSocket.
+  </p>
+
+  <div class="fluxo">
+    <div class="passo verde">
+      <i data-lucide="monitor"></i>
+      PC Atendente<br><small>navegador</small>
+    </div>
+    <div class="seta"><i data-lucide="arrow-left-right"></i></div>
+    <div class="passo">
+      <i data-lucide="server"></i>
+      Servidor Node<br><small>cardápio + senhas</small>
+    </div>
+    <div class="seta"><i data-lucide="arrow-left-right"></i></div>
+    <div class="passo verde">
+      <i data-lucide="tv"></i>
+      TV do salão<br><small>navegador</small>
+    </div>
+  </div>
+
+  <h2><i data-lucide="database"></i> Modelo de dados</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Entidade</th>
+        <th>Campos principais</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Item do cardápio</strong></td>
+        <td>nome, categoria, descrição, tamanhos[], preços[], disponível</td>
+      </tr>
+      <tr>
+        <td><strong>Pedido</strong></td>
+        <td>senha, itens[], total, status, horário</td>
+      </tr>
+      <tr>
+        <td><strong>Item do pedido</strong></td>
+        <td>referência, tamanho, sabor(es), adicionais, quantidade, preço</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2><i data-lucide="layers"></i> Stack técnica</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Camada</th>
+        <th>Tecnologia</th>
+        <th>Justificativa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Backend</strong></td>
+        <td>Node.js + Express + WebSocket</td>
+        <td>Leve, multiplataforma, tempo real</td>
+      </tr>
+      <tr>
+        <td><strong>Frontend</strong></td>
+        <td>HTML + CSS + JavaScript</td>
+        <td>Sem build, roda em qualquer navegador</td>
+      </tr>
+      <tr>
+        <td><strong>Persistência</strong></td>
+        <td>Arquivo JSON local</td>
+        <td>Sem banco; sobrevive a reinicializações</td>
+      </tr>
+      <tr>
+        <td><strong>Rede</strong></td>
+        <td>WiFi local da pizzaria</td>
+        <td>Independente de internet</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2><i data-lucide="hard-drive"></i> Requisitos de hardware</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3><i data-lucide="check-circle-2"></i> Configuração mínima</h3>
+      <ul>
+        <li>1 computador (o do caixa)</li>
+        <li>1 TV ou monitor com HDMI</li>
+        <li>Cabo HDMI <em>ou</em> mini-PC / Fire TV Stick</li>
+        <li>WiFi na pizzaria</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><i data-lucide="star"></i> Configuração recomendada</h3>
+      <ul>
+        <li>Notebook/PC dedicado no caixa</li>
+        <li>Smart TV Full HD de 40" ou superior</li>
+        <li>Roteador WiFi estável</li>
+        <li>No-break para o PC (opcional)</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 6 de 9</div>
+  </div>
+</section>
+
+<!-- ==================== SEÇÃO 5B — MODELO COMERCIAL ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo">
+      <div class="logo-mark">CG</div>
+      <div>CodeGus</div>
+    </div>
+    <div class="meta-header">
+      Modelo Comercial<br>
+      <strong>Investimento e contrapartida</strong>
+    </div>
+  </div>
+
+  <h2><i data-lucide="tag"></i> Investimento</h2>
+  <div class="destaque">
+    <i data-lucide="gift"></i>
+    <div>
+      <strong>Sistema entregue sem custo.</strong> A CodeGus disponibiliza o sistema
+      completo — cardápio, montagem de pedido, painel de senhas, instalação e
+      treinamento — <strong>gratuitamente</strong>, mediante o aceite dos termos de
+      exibição descritos abaixo.
+    </div>
+  </div>
+
+  <h2><i data-lucide="handshake"></i> Contrapartida</h2>
+  <p>
+    Em troca da entrega sem custo, o painel da TV do salão exibirá material institucional
+    da CodeGus, conforme especificado no <strong>Módulo de Propaganda</strong>:
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3><i data-lucide="layout-panel-top"></i> Barra fixa no rodapé</h3>
+      <ul>
+        <li>Presente <strong>permanentemente</strong> no painel</li>
+        <li>Ocupa faixa discreta no rodapé da TV</li>
+        <li>Não interfere na leitura das senhas</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><i data-lucide="play-circle"></i> Slides periódicos</h3>
+      <ul>
+        <li>Slide de tela cheia a cada <strong>~5 minutos</strong></li>
+        <li>Duração de 8 a 15 segundos</li>
+        <li>Sem áudio, sem interrupção de senhas novas</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2><i data-lucide="scroll-text"></i> Termos e condições</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Condição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Vigência</strong></td>
+        <td>Enquanto o sistema estiver em uso na pizzaria</td>
+      </tr>
+      <tr>
+        <td><strong>Manutenção</strong></td>
+        <td>Suporte técnico e atualizações inclusos, sem custo adicional</td>
+      </tr>
+      <tr>
+        <td><strong>Exclusividade setorial</strong></td>
+        <td>Propagandas de terceiros permitidas, exceto do setor de tecnologia</td>
+      </tr>
+      <tr>
+        <td><strong>Personalização</strong></td>
+        <td>Conteúdo da propaganda pode ser ajustado pela CodeGus a qualquer momento</td>
+      </tr>
+      <tr>
+        <td><strong>Encerramento</strong></td>
+        <td>Pizzaria pode encerrar a qualquer momento sem multa</td>
+      </tr>
+      <tr>
+        <td><strong>Migração paga</strong></td>
+        <td>Opção futura de remover a propaganda mediante contratação de plano pago</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="caixa-info">
+    <i data-lucide="info"></i>
+    <div>
+      <strong>Modelo win-win.</strong> A pizzaria obtém um sistema profissional sem
+      investimento inicial, e a CodeGus ganha visibilidade em um ponto de alta circulação.
+    </div>
+  </div>
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 7 de 9</div>
+  </div>
+</section>
+
+<!-- ==================== SEÇÃO 5 — CRONOGRAMA + ASSINATURA ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo">
+      <div class="logo-mark">CG</div>
+      <div>CodeGus</div>
+    </div>
+    <div class="meta-header">
+      Cronograma e Evolução<br>
+      <strong>Roadmap do projeto</strong>
+    </div>
+  </div>
+
+  <h2><i data-lucide="calendar-clock"></i> Etapas de entrega</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Etapa</th>
+        <th>Entrega</th>
+        <th>Prazo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Desenvolvimento</td>
+        <td>Servidor + cardápio + montagem + painel</td>
+        <td>5 a 7 dias</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Cadastro inicial</td>
+        <td>Importação do cardápio real da pizzaria</td>
+        <td>1 dia</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Testes locais</td>
+        <td>Validação de fluxos e cenários extremos</td>
+        <td>1 dia</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Instalação</td>
+        <td>Setup do PC, TV e rede na pizzaria</td>
+        <td>Meio dia</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Treinamento</td>
+        <td>Capacitação dos atendentes e do gestor</td>
+        <td>2 horas</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="caixa-info">
+    <i data-lucide="info"></i>
+    <div>
+      <strong>Prazo total estimado:</strong> aproximadamente <strong>10 dias corridos</strong>
+      entre o aceite da proposta e a pizzaria operando com o sistema em produção.
+    </div>
+  </div>
+
+  <h2><i data-lucide="trending-up"></i> Roadmap de evolução</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3><i data-lucide="git-branch"></i> Fase 2 <span class="badge" style="background: var(--cinza-500);">Futuro</span></h3>
+      <ul>
+        <li><span class="tag opcional">Fotos</span> Imagens dos itens do cardápio</li>
+        <li><span class="tag opcional">Som</span> Beep ou voz sintetizada</li>
+        <li><span class="tag opcional">Cliente</span> Nome do cliente no pedido</li>
+        <li><span class="tag opcional">Relatório</span> Itens mais vendidos</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><i data-lucide="cloud"></i> Fase 3 <span class="badge" style="background: var(--cinza-500);">Futuro</span></h3>
+      <ul>
+        <li><span class="tag opcional">QR Code</span> Cardápio digital na mesa</li>
+        <li><span class="tag opcional">WhatsApp</span> Notificação ao cliente</li>
+        <li><span class="tag opcional">iFood</span> Integração com pedidos online</li>
+        <li><span class="tag opcional">Multi-loja</span> Suporte a várias filiais</li>
+      </ul>
+    </div>
+  </div>
+
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 8 de 9</div>
+  </div>
+</section>
+
+<!-- ==================== SEÇÃO 7 — PROPOSTA + ASSINATURA ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo">
+      <div class="logo-mark">CG</div>
+      <div>CodeGus</div>
+    </div>
+    <div class="meta-header">
+      Encerramento<br>
+      <strong>Diferenciais e contato</strong>
+    </div>
+  </div>
+
+  <h2><i data-lucide="award"></i> Por que essa proposta</h2>
+  <div class="destaque">
+    <i data-lucide="check-circle-2"></i>
+    <div>
+      <ul style="margin: 0; padding-left: 18px;">
+        <li><strong>Solução completa:</strong> cardápio, pedido e painel em um só sistema</li>
+        <li><strong>Rápido de entregar:</strong> ~10 dias entre o aceite e a operação</li>
+        <li><strong>Baixo custo operacional:</strong> zero mensalidade</li>
+        <li><strong>Confiável:</strong> operação independente da internet</li>
+        <li><strong>Autonomia:</strong> a gestão do cardápio fica com o dono</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="assinatura">
+    <h3><i data-lucide="handshake"></i> Vamos construir juntos</h3>
+    <p>Esta proposta é o ponto de partida. Ajustes de escopo são bem-vindos.</p>
+    <div class="contato">
+      <div class="contato-item">
+        <i data-lucide="globe"></i>
+        codegus.com
+      </div>
+      <div class="contato-item">
+        <i data-lucide="phone"></i>
+        (47) 98496-5787
+      </div>
+      <div class="contato-item">
+        <i data-lucide="shield-check"></i>
+        Entrega comprometida
+      </div>
+    </div>
+  </div>
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 9 de 9</div>
+  </div>
+</section>
+
+<script>
+  lucide.createIcons();
+</script>
+</body>
+</html>

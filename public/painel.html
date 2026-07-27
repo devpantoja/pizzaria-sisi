@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel — Pizzaria</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  html, body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: var(--branco);
+    overflow: hidden;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  /* ======== Painel de senhas (default) ======== */
+  #telaSenhas {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    padding: 40px 40px 20px;
+    min-height: 0;
+  }
+
+  .coluna {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 0;
+  }
+
+  .coluna h2 {
+    font-size: clamp(20px, 2.2vw, 32px);
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    font-weight: 700;
+    opacity: 0.55;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .coluna.pronto h2 {
+    color: var(--dourado-claro);
+    opacity: 1;
+  }
+  .coluna h2::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .senhas {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-content: flex-start;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+  }
+  .senhas .n {
+    font-size: clamp(48px, 6vw, 96px);
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1;
+    animation: entra 0.3s ease-out;
+  }
+
+  .coluna.pronto .senhas {
+    justify-content: center;
+    align-content: center;
+  }
+  .coluna.pronto .senhas .n {
+    font-size: clamp(120px, 18vw, 320px);
+    color: var(--dourado-claro);
+    text-shadow: 0 0 60px rgba(217, 119, 6, 0.5);
+    font-weight: 900;
+  }
+  .coluna.pronto .senhas .n.destaque {
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  .vazio {
+    opacity: 0.25;
+    font-size: clamp(24px, 3vw, 48px);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  @keyframes entra {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  /* Barra CodeGus permanente — paleta oficial (navy → petróleo) */
+  .barra-codegus {
+    background: var(--cg-gradient);
+    color: var(--branco);
+    padding: 14px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: clamp(12px, 1.2vw, 16px);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+    z-index: 5;
+    border-top: 3px solid var(--cg-duck);
+  }
+  .barra-codegus .marca {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+  }
+  .barra-codegus .selo {
+    width: 30px;
+    height: 30px;
+    background: var(--cg-duck);
+    color: var(--cg-navy);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: -0.5px;
+  }
+  .barra-codegus .contato {
+    display: flex;
+    gap: 20px;
+    opacity: 0.95;
+  }
+
+  /* ======== Slide de propaganda (fullscreen) ======== */
+  #telaSlide {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    animation: fadeIn 0.6s ease-out;
+  }
+  #telaSlide.visivel { display: flex; }
+
+  #telaSlide.codegus {
+    background: var(--cg-gradient);
+  }
+  #telaSlide.codegus::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(245, 158, 11, 0.15) 0%, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(8, 145, 178, 0.2) 0%, transparent 45%);
+    pointer-events: none;
+  }
+  #telaSlide.terceiro {
+    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-escuro, #047857) 100%);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .slide-conteudo {
+    text-align: center;
+    color: white;
+    max-width: 1400px;
+    width: 100%;
+  }
+  .slide-conteudo {
+    position: relative;
+    z-index: 1;
+  }
+  .slide-conteudo .selo-grande {
+    width: clamp(80px, 10vw, 140px);
+    height: clamp(80px, 10vw, 140px);
+    background: var(--cg-duck);
+    color: var(--cg-navy);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: clamp(32px, 5vw, 64px);
+    margin: 0 auto 30px;
+    box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
+    letter-spacing: -1px;
+  }
+  #telaSlide.terceiro .slide-conteudo .selo-grande {
+    background: white;
+    color: var(--verde);
+  }
+  .slide-conteudo .subtitulo {
+    color: var(--cg-duck);
+  }
+  #telaSlide.terceiro .slide-conteudo .subtitulo { color: white; opacity: 0.95; }
+
+  .slide-conteudo h2 {
+    font-size: clamp(56px, 10vw, 140px);
+    font-weight: 900;
+    letter-spacing: -3px;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+  .slide-conteudo .subtitulo {
+    font-size: clamp(20px, 3vw, 42px);
+    font-weight: 500;
+    opacity: 0.95;
+    margin-bottom: 32px;
+  }
+  .slide-conteudo .corpo {
+    font-size: clamp(16px, 2vw, 26px);
+    line-height: 1.6;
+    opacity: 0.95;
+    white-space: pre-wrap;
+  }
+  .slide-conteudo img {
+    max-height: 200px;
+    max-width: 60%;
+    margin: 20px auto;
+    border-radius: 12px;
+  }
+
+  /* Indicador visual do ciclo */
+  #proximoSlide {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.4);
+    color: rgba(255,255,255,0.7);
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 10px;
+    z-index: 6;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .status-conexao {
+    background: rgba(5, 150, 105, 0.9);
+    color: white;
+  }
+  .status-conexao.offline { background: rgba(220, 38, 38, 0.9); }
+</style>
+</head>
+<body>
+
+<div id="statusConexao" class="status-conexao">conectando…</div>
+<div id="proximoSlide"></div>
+
+<!-- Tela padrão: senhas -->
+<div id="telaSenhas">
+  <div class="coluna">
+    <h2>Em Preparação</h2>
+    <div id="senhasPreparando" class="senhas"></div>
+  </div>
+  <div class="coluna pronto">
+    <h2>Pronto</h2>
+    <div id="senhasProntas" class="senhas"></div>
+  </div>
+</div>
+
+<!-- Slide de propaganda fullscreen -->
+<div id="telaSlide">
+  <div class="slide-conteudo">
+    <div id="slideSelo" class="selo-grande">CG</div>
+    <h2 id="slideTitulo"></h2>
+    <div id="slideSubtitulo" class="subtitulo"></div>
+    <div id="slideCorpo" class="corpo"></div>
+    <img id="slideImagem" style="display: none;">
+  </div>
+</div>
+
+<div class="barra-codegus">
+  <div class="marca">
+    <div class="selo">CG</div>
+    <span>Desenvolvido por CodeGus — Sistemas sob medida</span>
+  </div>
+  <div class="contato">
+    <span>codegus.com</span>
+    <span>·</span>
+    <span>(47) 98496-5787</span>
+  </div>
+</div>
+
+<script src="/painel.js"></script>
+</body>
+</html>

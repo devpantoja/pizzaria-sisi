@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imprimir — Pizzaria</title>
+<style>
+  /* ==== Página imprimível otimizada pra térmica 80mm (mas ok em A4 também) ==== */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @page {
+    size: 80mm auto; /* largura de impressora térmica */
+    margin: 3mm;
+  }
+
+  html, body {
+    font-family: 'Courier New', ui-monospace, monospace;
+    color: #000;
+    background: #ddd;
+    font-size: 12pt;
+    line-height: 1.35;
+  }
+
+  .container {
+    width: 80mm;
+    padding: 6mm 4mm;
+    margin: 20px auto;
+    background: white;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+
+  .barra-controle {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    background: #0f172a;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+  }
+  .barra-controle button {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .barra-controle button:hover { background: #991b1b; }
+  .barra-controle .btn-cinza {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  h1, h2, h3, h4 { font-family: inherit; font-weight: bold; }
+
+  .cabecalho {
+    text-align: center;
+    padding-bottom: 6px;
+    border-bottom: 2px dashed #000;
+    margin-bottom: 8px;
+  }
+  .cabecalho .nome-loja {
+    font-size: 16pt;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  .cabecalho .via {
+    font-size: 10pt;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-top: 3px;
+  }
+
+  .senha-block {
+    text-align: center;
+    padding: 8px 0;
+    margin: 6px 0;
+  }
+  .senha-block .rotulo {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .senha-block .numero {
+    font-size: 48pt;
+    font-weight: 900;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  /* Cozinha: SENHA GIGANTE */
+  .via-cozinha .senha-block {
+    border: 3px solid #000;
+    padding: 10px 0;
+  }
+  .via-cozinha .senha-block .numero {
+    font-size: 72pt;
+  }
+
+  .info-linha {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10pt;
+    margin: 2px 0;
+  }
+
+  hr.divisor {
+    border: none;
+    border-top: 1px dashed #000;
+    margin: 8px 0;
+  }
+
+  h3.titulo-secao {
+    font-size: 10pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .item {
+    margin-bottom: 8px;
+  }
+  .item .nome-item {
+    font-weight: bold;
+    font-size: 12pt;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .item .nome-item .qtd {
+    background: #000;
+    color: white;
+    padding: 1px 5px;
+    margin-right: 6px;
+    font-size: 10pt;
+  }
+  .item .tamanho {
+    font-size: 10pt;
+    padding-left: 4px;
+    color: #444;
+  }
+  .item .adicionais {
+    font-size: 10pt;
+    padding-left: 10px;
+    margin-top: 2px;
+  }
+  .item .adicionais li {
+    list-style: none;
+    padding-left: 0;
+  }
+  .item .adicionais li::before { content: '+ '; }
+  .item .preco {
+    font-weight: bold;
+    text-align: right;
+    font-size: 11pt;
+    margin-top: 2px;
+  }
+
+  /* Cozinha: destaque grande no nome do item */
+  .via-cozinha .item .nome-item { font-size: 14pt; }
+  .via-cozinha .item .tamanho { font-size: 11pt; font-weight: bold; }
+  .via-cozinha .item .adicionais { font-size: 11pt; }
+  .via-cozinha .item .adicionais li { font-weight: bold; }
+
+  .meia-meia-badge {
+    display: inline-block;
+    border: 2px solid #000;
+    padding: 0 4px;
+    font-size: 8pt;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  .observacao {
+    border: 2px solid #000;
+    padding: 6px 8px;
+    margin: 8px 0;
+    background: #fef3c7;
+  }
+  .observacao .rotulo {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+  .observacao .conteudo {
+    font-size: 11pt;
+    font-weight: bold;
+    white-space: pre-wrap;
+  }
+  .via-cozinha .observacao {
+    background: #000;
+    color: white;
+  }
+  .via-cozinha .observacao .conteudo { font-size: 13pt; }
+
+  .total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-top: 2px solid #000;
+    margin-top: 6px;
+    font-size: 14pt;
+    font-weight: bold;
+  }
+
+  .rodape {
+    text-align: center;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 2px dashed #000;
+    font-size: 9pt;
+    line-height: 1.4;
+  }
+  .rodape .marca {
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-top: 4px;
+    color: #0e7490; /* teal CodeGus */
+  }
+  .rodape .site {
+    color: #64748b;
+    font-size: 8pt;
+    margin-top: 2px;
+  }
+
+  .loader {
+    text-align: center;
+    padding: 40px;
+    font-family: system-ui;
+    color: #999;
+  }
+
+  @media print {
+    body { background: white; }
+    .container {
+      margin: 0;
+      box-shadow: none;
+      padding: 0;
+      width: auto;
+    }
+    .barra-controle { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="barra-controle">
+  <button onclick="window.print()">🖨 Imprimir de novo</button>
+  <button class="btn-cinza" onclick="window.close()">Fechar</button>
+</div>
+
+<!-- Overlay que aparece após imprimir a via 1 -->
+<div id="overlayProximaVia" style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.9); z-index: 200; align-items: center; justify-content: center; font-family: system-ui, sans-serif;">
+  <div style="background: white; border-radius: 12px; padding: 32px; max-width: 380px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
+    <div id="overlayIcone" style="font-size: 48px; margin-bottom: 12px;">✓</div>
+    <h2 id="overlayTitulo" style="color: #0f172a; margin-bottom: 8px; font-size: 20px;">Via do cliente enviada</h2>
+    <p id="overlayTexto" style="color: #64748b; margin-bottom: 20px; font-size: 14px; line-height: 1.5;">Agora imprima a via da cozinha.</p>
+    <button id="btnProximaVia" onclick="proximaVia()" style="background: #dc2626; color: white; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; font-family: inherit; box-shadow: 0 4px 12px rgba(220,38,38,0.3);">
+      🖨 Imprimir via COZINHA
+    </button>
+    <button onclick="window.close()" style="background: transparent; color: #64748b; border: none; padding: 12px; margin-top: 10px; cursor: pointer; font-family: inherit; font-size: 13px;">
+      Fechar sem imprimir cozinha
+    </button>
+  </div>
+</div>
+
+<div id="container" class="container">
+  <div class="loader">Carregando…</div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const senhaId = Number(params.get('senha'));
+const via = params.get('via') === 'cozinha' ? 'cozinha' : 'cliente';
+const autoprint = params.get('autoprint') !== '0';
+// Se ?duo=1 na URL: depois de imprimir cliente, oferece imprimir cozinha na MESMA janela
+const modoDuo = params.get('duo') === '1' && via === 'cliente';
+
+const NOME_LOJA = 'PIZZARIA';
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function preco(centavos) {
+  return `R$ ${(centavos / 100).toFixed(2).replace('.', ',')}`;
+}
+
+async function carregar() {
+  if (!senhaId) {
+    document.getElementById('container').innerHTML = '<div class="loader">Senha inválida</div>';
+    return;
+  }
+
+  const [senhaR, pedidoR] = await Promise.all([
+    fetch('/api/senhas').then(r => r.json()),
+    fetch(`/api/senhas/${senhaId}/pedido`).then(r => r.ok ? r.json() : null),
+  ]);
+  const senha = senhaR.find(s => s.id === senhaId);
+  if (!senha) {
+    document.getElementById('container').innerHTML = '<div class="loader">Senha não encontrada</div>';
+    return;
+  }
+
+  render(senha, pedidoR);
+
+  if (autoprint) {
+    // Espera fontes/layout renderizarem antes de disparar o print
+    setTimeout(() => {
+      window.print();
+      // No modo duo (cliente + cozinha), oferece imprimir a próxima via
+      // depois que o diálogo de print for fechado (Chrome/Safari disparam
+      // 'afterprint' quando o usuário confirma ou cancela).
+      if (modoDuo) {
+        window.addEventListener('afterprint', mostrarOverlayProximaVia, { once: true });
+        // Fallback: se afterprint não disparar (raro), mostra overlay depois de 1s
+        setTimeout(mostrarOverlayProximaVia, 1500);
+      }
+    }, 250);
+  }
+}
+
+let overlayJaMostrado = false;
+function mostrarOverlayProximaVia() {
+  if (overlayJaMostrado) return;
+  overlayJaMostrado = true;
+  document.getElementById('overlayProximaVia').style.display = 'flex';
+}
+
+function proximaVia() {
+  // Recarrega a MESMA janela com via=cozinha e autoprint automático
+  location.href = `/imprimir?senha=${senhaId}&via=cozinha`;
+}
+
+function render(senha, pedido) {
+  const container = document.getElementById('container');
+  container.classList.add(via === 'cozinha' ? 'via-cozinha' : 'via-cliente');
+
+  const numero = String(senha.numero).padStart(2, '0');
+  const hora = (senha.criada_em || '').slice(11, 16);
+  const data = (senha.criada_em || '').slice(0, 10).split('-').reverse().join('/');
+
+  const itensHtml = pedido?.itens?.length
+    ? pedido.itens.map(i => renderItem(i)).join('<hr class="divisor">')
+    : '<div style="text-align:center;padding:12px 0;color:#666;">Sem itens registrados</div>';
+
+  const observacaoHtml = (pedido?.observacao || '').trim()
+    ? `<div class="observacao">
+         <div class="rotulo">Observação</div>
+         <div class="conteudo">${esc(pedido.observacao)}</div>
+       </div>`
+    : '';
+
+  const totalHtml = (via === 'cliente' && pedido)
+    ? `<div class="total"><span>TOTAL</span><span>${preco(pedido.total_centavos)}</span></div>`
+    : '';
+
+  container.innerHTML = `
+    <div class="cabecalho">
+      <div class="nome-loja">${NOME_LOJA}</div>
+      <div class="via">Via ${via}</div>
+    </div>
+
+    <div class="senha-block">
+      <div class="rotulo">Senha</div>
+      <div class="numero">${numero}</div>
+    </div>
+
+    <div class="info-linha"><span>Data</span><span>${data}</span></div>
+    <div class="info-linha"><span>Hora</span><span>${hora}</span></div>
+
+    <hr class="divisor">
+
+    <h3 class="titulo-secao">Itens do pedido</h3>
+    ${itensHtml}
+
+    ${observacaoHtml}
+    ${totalHtml}
+
+    <div class="rodape">
+      Sistema de senhas por
+      <div class="marca">CodeGus</div>
+      <div class="site">codegus.com · (47) 98496-5787</div>
+    </div>
+  `;
+}
+
+function renderItem(i) {
+  const badgeMM = i.meia_meia ? '<span class="meia-meia-badge">½+½</span>' : '';
+  const adicionais = i.adicionais.length
+    ? `<ul class="adicionais">${i.adicionais.map(a => `<li>${esc(a.nome_snapshot)}${via === 'cliente' && a.preco_centavos ? ` — ${preco(a.preco_centavos)}` : ''}</li>`).join('')}</ul>`
+    : '';
+  const precoLinha = via === 'cliente'
+    ? `<div class="preco">${preco(i.preco_total_centavos)}</div>`
+    : '';
+  return `
+    <div class="item">
+      <div class="nome-item">
+        <span><span class="qtd">${i.quantidade}x</span>${esc(i.nome_snapshot)}${badgeMM}</span>
+      </div>
+      <div class="tamanho">${esc(i.tamanho_nome)}</div>
+      ${adicionais}
+      ${precoLinha}
+    </div>
+  `;
+}
+
+carregar();
+</script>
+</body>
+</html>

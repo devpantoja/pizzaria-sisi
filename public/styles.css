@@ -1,0 +1,63 @@
+:root {
+  /* Paleta operacional pizzaria (interface do dia-a-dia) */
+  --primaria: #0f172a;
+  --primaria-clara: #1e293b;
+  --acento: #dc2626;
+  --acento-escuro: #991b1b;
+  --acento-claro: #fef2f2;
+  --dourado: #d97706;
+  --dourado-claro: #fef3c7;
+  --verde: #059669;
+  --verde-escuro: #047857;
+  --cinza-100: #f8fafc;
+  --cinza-200: #e2e8f0;
+  --cinza-300: #cbd5e1;
+  --cinza-500: #64748b;
+  --cinza-700: #334155;
+  --cinza-900: #0f172a;
+  --branco: #ffffff;
+
+  /* Paleta oficial CodeGus (marca — usar SÓ em propaganda / barra CG) */
+  --cg-navy: #1e293b;
+  --cg-teal: #0e7490;
+  --cg-teal-hover: #155e75;
+  --cg-teal-light: #0891b2;
+  --cg-cream-1: #fdfcfa;
+  --cg-cream-2: #f5f2ec;
+  --cg-duck: #f59e0b;
+  --cg-duck-beak: #ea580c;
+  --cg-gradient: linear-gradient(135deg, #1e293b 0%, #0e7490 100%);
+  --cg-gradient-accent: linear-gradient(135deg, #0e7490 0%, #0891b2 100%);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--cinza-900);
+  background: var(--cinza-100);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+}
+
+.status-conexao {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 100;
+  background: var(--verde);
+  color: var(--branco);
+  transition: background 0.2s;
+}
+.status-conexao.offline { background: var(--acento); }

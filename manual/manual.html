@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>CodeGus — Manual de Uso: Sistema de Pizzaria</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  @page { size: A4; margin: 0; }
+
+  :root {
+    --cg-navy: #1e293b;
+    --cg-teal: #0e7490;
+    --cg-teal-hover: #155e75;
+    --cg-teal-light: #0891b2;
+    --cg-cream-1: #fdfcfa;
+    --cg-cream-2: #f5f2ec;
+    --cg-duck: #f59e0b;
+    --cg-duck-beak: #ea580c;
+    --cg-gradient: linear-gradient(135deg, #1e293b 0%, #0e7490 100%);
+
+    --cinza-100: #f8fafc;
+    --cinza-200: #e2e8f0;
+    --cinza-300: #cbd5e1;
+    --cinza-500: #64748b;
+    --cinza-700: #334155;
+    --branco: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--cg-navy);
+    line-height: 1.55;
+    font-size: 10.5pt;
+    background: #e2e8f0;
+  }
+
+  .secao {
+    width: 210mm;
+    height: 297mm;
+    padding: 12mm 14mm 18mm 14mm;
+    margin: 0 auto 20px;
+    background: white;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.12);
+    position: relative;
+    overflow: hidden;
+  }
+  .secao > .rodape-pagina {
+    position: absolute;
+    left: 14mm;
+    right: 14mm;
+    bottom: 8mm;
+    padding-top: 6px;
+    border-top: 1px solid var(--cinza-200);
+    display: flex;
+    justify-content: space-between;
+    font-size: 8pt;
+    color: var(--cinza-500);
+  }
+  .secao > .rodape-pagina .marca { font-weight: 700; color: var(--cg-teal); }
+
+  .cabecalho-secao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--cinza-200);
+    margin-bottom: 12px;
+    font-size: 9.5pt;
+    color: var(--cinza-500);
+  }
+  .cabecalho-secao .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    color: var(--cg-navy);
+    font-size: 13pt;
+  }
+  .cabecalho-secao .logo-mark {
+    width: 30px;
+    height: 30px;
+    background: var(--cg-duck);
+    color: var(--cg-navy);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 11pt;
+    letter-spacing: -0.5px;
+  }
+  .cabecalho-secao .meta-header {
+    text-align: right;
+    line-height: 1.3;
+  }
+
+  /* ============= Capa cheia (folha inteira) ============= */
+  .capa-cheia {
+    background: var(--cg-gradient);
+    color: white;
+    padding: 0 !important;
+    overflow: hidden;
+    position: relative;
+  }
+  .capa-cheia .conteudo-capa {
+    height: 100%;
+    padding: 20mm 20mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+  .capa-cheia::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 15%, rgba(245, 158, 11, 0.18) 0%, transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(8, 145, 178, 0.25) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .capa-cheia .topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10pt;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .capa-cheia .topo .logo-topo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    text-transform: none;
+    font-size: 15pt;
+    opacity: 1;
+  }
+  .capa-cheia .topo .logo-mark-topo {
+    width: 40px;
+    height: 40px;
+    background: var(--cg-duck);
+    color: var(--cg-navy);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 15pt;
+    letter-spacing: -0.5px;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+  }
+
+  .capa-cheia .centro {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .capa-cheia .badge-capa {
+    display: inline-block;
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--cg-duck);
+    padding: 6px 18px;
+    border-radius: 24px;
+    font-size: 11pt;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    border: 1.5px solid rgba(245, 158, 11, 0.4);
+  }
+  .capa-cheia h1 {
+    font-size: 54pt;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+    color: white;
+  }
+  .capa-cheia h1 .destaque {
+    color: var(--cg-duck);
+    display: block;
+  }
+  .capa-cheia .subtitulo-capa {
+    font-size: 16pt;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-bottom: 40px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.4;
+  }
+
+  .capa-cheia .divisor-capa {
+    width: 80px;
+    height: 4px;
+    background: var(--cg-duck);
+    margin: 0 auto 30px;
+    border-radius: 2px;
+  }
+
+  .capa-cheia .meta-capa {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    max-width: 620px;
+    margin: 0 auto;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .capa-cheia .meta-item {
+    text-align: center;
+  }
+  .capa-cheia .meta-item .rotulo {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--cg-duck);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .capa-cheia .meta-item .valor {
+    font-size: 13pt;
+    font-weight: 600;
+    color: white;
+  }
+
+  .capa-cheia .rodape-capa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10pt;
+    color: rgba(255, 255, 255, 0.7);
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .capa-cheia .rodape-capa .site {
+    color: var(--cg-duck);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* Capa antiga (mini) — mantém pra compatibilidade caso reuse */
+  .capa {
+    text-align: center;
+    padding: 30px 0 24px;
+  }
+  .capa .badge-servico {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--cg-cream-2);
+    color: var(--cg-teal);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 10pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    border: 1px solid var(--cinza-200);
+  }
+  .capa h1 {
+    font-size: 32pt;
+    color: var(--cg-navy);
+    margin-bottom: 8px;
+    letter-spacing: -1.2px;
+    line-height: 1.1;
+    font-weight: 800;
+  }
+  .capa .subtitulo {
+    font-size: 15pt;
+    color: var(--cinza-500);
+    margin-bottom: 24px;
+    font-weight: 400;
+  }
+  .capa .destaque-capa {
+    background: var(--cg-gradient);
+    color: white;
+    padding: 32px 24px;
+    border-radius: 12px;
+    margin-top: 28px;
+    box-shadow: 0 10px 30px rgba(14, 116, 133, 0.25);
+  }
+  .capa .destaque-capa h3 {
+    color: var(--cg-duck);
+    font-size: 12pt;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+  .capa .destaque-capa p {
+    color: white;
+    font-size: 12pt;
+    line-height: 1.6;
+  }
+  .capa .destaque-capa strong,
+  .capa .destaque-capa em {
+    color: var(--cg-duck);
+    font-weight: 700;
+  }
+
+  h2 {
+    color: var(--cg-navy);
+    font-size: 17pt;
+    margin: 0 0 10px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid var(--cg-teal);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2 .num-secao {
+    background: var(--cg-teal);
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12pt;
+    font-weight: 900;
+  }
+
+  h3 {
+    font-size: 12pt;
+    color: var(--cg-navy);
+    margin: 12px 0 6px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  h3::before {
+    content: '';
+    width: 5px;
+    height: 16px;
+    background: var(--cg-duck);
+    border-radius: 3px;
+  }
+
+  /* Ícones Lucide inline */
+  [data-lucide] {
+    stroke-width: 2.2;
+    vertical-align: -2px;
+    display: inline-block;
+  }
+  .ico {
+    width: 14px;
+    height: 14px;
+    color: var(--cg-teal);
+  }
+  .ico-navy { color: var(--cg-navy); }
+  .ico-duck { color: var(--cg-duck); }
+  .ico-white { color: white; }
+  .ico-sm { width: 12px; height: 12px; }
+  .ico-lg { width: 18px; height: 18px; }
+  .assinatura-final .ico { color: var(--cg-duck); }
+
+  p { margin-bottom: 6px; color: var(--cinza-700); font-size: 10pt; }
+  ul, ol { margin: 4px 0 8px 20px; color: var(--cinza-700); font-size: 10pt; }
+  li { margin-bottom: 3px; }
+  strong { color: var(--cg-navy); font-weight: 600; }
+  em { color: var(--cg-teal); font-style: normal; font-weight: 600; }
+
+  .dica {
+    background: #fef3c7;
+    border-left: 4px solid var(--cg-duck);
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 4px;
+    font-size: 9.5pt;
+  }
+  .dica strong { color: var(--cg-duck-beak); }
+  .info {
+    background: var(--cg-cream-2);
+    border-left: 4px solid var(--cg-teal);
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 4px;
+    font-size: 9.5pt;
+  }
+  .info strong { color: var(--cg-teal); }
+
+  .print-wrap {
+    text-align: center;
+    margin: 8px 0 10px;
+  }
+  .print-wrap img {
+    max-width: 100%;
+    max-height: 68mm;
+    border: 1px solid var(--cinza-200);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .print-wrap.pequeno img { max-height: 42mm; }
+  .print-wrap.medio img { max-height: 55mm; }
+  .print-wrap .legenda {
+    margin-top: 3px;
+    font-size: 8.5pt;
+    color: var(--cinza-500);
+    font-style: italic;
+  }
+  .print-lado-a-lado {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 8px 0;
+  }
+  .print-lado-a-lado img {
+    width: 100%;
+    max-height: 70mm;
+    object-fit: contain;
+    border: 1px solid var(--cinza-200);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .print-lado-a-lado .legenda {
+    text-align: center;
+    font-size: 8.5pt;
+    color: var(--cinza-500);
+    font-style: italic;
+    margin-top: 3px;
+  }
+
+  ol.passos {
+    counter-reset: passo;
+    list-style: none;
+    padding: 0;
+  }
+  ol.passos > li {
+    counter-increment: passo;
+    padding: 5px 0 5px 34px;
+    position: relative;
+    margin-bottom: 4px;
+    font-size: 10pt;
+  }
+  ol.passos > li::before {
+    content: counter(passo);
+    position: absolute;
+    left: 0;
+    top: 4px;
+    width: 24px;
+    height: 24px;
+    background: var(--cg-teal);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 11pt;
+  }
+
+  .assinatura-final {
+    margin-top: 20px;
+    padding: 24px;
+    background: var(--cg-gradient);
+    color: white;
+    border-radius: 12px;
+    text-align: center;
+  }
+  .assinatura-final h3 {
+    color: var(--cg-duck);
+    font-size: 15pt;
+    margin-bottom: 6px;
+    justify-content: center;
+  }
+  .assinatura-final h3::before { display: none; }
+  .assinatura-final p {
+    color: white;
+    font-size: 11pt;
+    margin-bottom: 12px;
+  }
+  .assinatura-final strong,
+  .assinatura-final em {
+    color: var(--cg-duck);
+    font-weight: 700;
+  }
+  .assinatura-final .contato {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    font-size: 10pt;
+  }
+
+  .indice ol {
+    counter-reset: cap;
+    list-style: none;
+    padding: 0;
+  }
+  .indice ol > li {
+    counter-increment: cap;
+    padding: 10px 14px;
+    background: var(--cg-cream-2);
+    margin-bottom: 6px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12pt;
+    color: var(--cg-navy);
+    font-weight: 600;
+    border-left: 4px solid var(--cg-teal);
+  }
+  .indice ol > li::before {
+    content: counter(cap, decimal-leading-zero);
+    color: var(--cg-teal);
+    font-weight: 900;
+    font-size: 14pt;
+    margin-right: 12px;
+    min-width: 32px;
+  }
+  .indice ol > li .titulo { flex: 1; }
+  .indice ol > li .pagina { color: var(--cinza-500); font-size: 10pt; font-weight: 500; }
+
+  .barra-controles {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: var(--cg-navy);
+    color: white;
+    padding: 10px 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+  }
+  .barra-controles button {
+    background: var(--cg-duck);
+    color: var(--cg-navy);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .barra-controles button:hover { background: var(--cg-duck-beak); color: white; }
+
+  @media print {
+    html, body { background: white; margin: 0; padding: 0; }
+    .barra-controles { display: none !important; }
+    .secao {
+      margin: 0 !important;
+      box-shadow: none !important;
+      width: 210mm;
+      height: 297mm;
+    }
+    /* Chrome/Safari: força imprimir cores/gradientes */
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="barra-controles">
+  <button onclick="window.print()">
+    <i data-lucide="printer" class="ico ico-navy"></i>
+    Imprimir / Salvar PDF
+  </button>
+</div>
+
+<!-- ==================== CAPA CHEIA ==================== -->
+<section class="secao capa-cheia">
+  <div class="conteudo-capa">
+
+    <div class="topo">
+      <div class="logo-topo">
+        <div class="logo-mark-topo">CG</div>
+        <div>CodeGus</div>
+      </div>
+      <div>Manual de Uso · v1.0</div>
+    </div>
+
+    <div class="centro">
+      <span class="badge-capa">Sistema de Pizzaria</span>
+      <h1>
+        Manual
+        <span class="destaque">de Uso</span>
+      </h1>
+      <div class="subtitulo-capa">
+        Guia completo para operar o sistema de senhas, cardápio e pedidos
+        da <strong style="color: var(--cg-duck); font-weight: 700;">Sisi Pizzeria</strong>
+      </div>
+      <div class="divisor-capa"></div>
+
+      <div class="meta-capa">
+        <div class="meta-item">
+          <div class="rotulo">Preparado para</div>
+          <div class="valor">Sisi Pizzeria</div>
+        </div>
+        <div class="meta-item">
+          <div class="rotulo">Desenvolvido por</div>
+          <div class="valor">CodeGus</div>
+        </div>
+        <div class="meta-item">
+          <div class="rotulo">Edição</div>
+          <div class="valor">2026 · v1.0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rodape-capa">
+      <div>Sistemas sob medida para o seu negócio</div>
+      <div class="site">codegus.com  ·  (47) 98496-5787</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SUMÁRIO ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo">
+      <div class="logo-mark">CG</div>
+      <div>CodeGus</div>
+    </div>
+    <div class="meta-header">
+      Manual de Uso<br>
+      <strong>Sistema de Pizzaria</strong>
+    </div>
+  </div>
+
+  <h2><span class="num-secao">i</span> Sumário</h2>
+
+  <p style="margin-bottom: 16px;">
+    Este manual mostra <strong>passo a passo</strong> como usar o sistema desenvolvido pela CodeGus
+    para gerenciar pedidos, senhas e cardápio da <strong>Sisi Pizzeria</strong>.
+    Não é preciso conhecimento técnico — basta seguir os capítulos na ordem.
+  </p>
+
+  <div class="indice">
+    <ol>
+      <li><span class="titulo">Visão geral do sistema</span><span class="pagina">pág. 3</span></li>
+      <li><span class="titulo">Montando um pedido (Atendente)</span><span class="pagina">pág. 4</span></li>
+      <li><span class="titulo">Pizza meia a meia</span><span class="pagina">pág. 5</span></li>
+      <li><span class="titulo">Painel do salão (TV)</span><span class="pagina">pág. 6</span></li>
+      <li><span class="titulo">Cadastrando o cardápio</span><span class="pagina">pág. 7</span></li>
+      <li><span class="titulo">Propagandas e configurações</span><span class="pagina">pág. 8</span></li>
+      <li><span class="titulo">Relatório do dia</span><span class="pagina">pág. 9</span></li>
+      <li><span class="titulo">Impressão do pedido</span><span class="pagina">pág. 10</span></li>
+    </ol>
+  </div>
+
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 2 de 10</div>
+  </div>
+</section>
+
+<!-- ==================== 1. VISÃO GERAL ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo"><div class="logo-mark">CG</div><div>CodeGus</div></div>
+    <div class="meta-header">Capítulo 1<br><strong>Visão geral</strong></div>
+  </div>
+
+  <h2><span class="num-secao">1</span> Visão geral do sistema</h2>
+  <p>
+    O sistema tem <strong>quatro telas</strong>. Cada uma tem um propósito claro. Você acessa todas
+    pelo navegador (Chrome, Safari ou Edge), digitando o endereço do computador da pizzaria.
+  </p>
+
+  <h3>As quatro telas</h3>
+  <ul>
+    <li><strong>Atendente</strong> — usada no caixa/balcão pra receber pedidos e gerar senhas.</li>
+    <li><strong>Painel</strong> — projetada na TV do salão, mostra as senhas prontas para o cliente.</li>
+    <li><strong>Cardápio</strong> (admin) — usada pelo dono para cadastrar pizzas, bebidas e preços.</li>
+    <li><strong>Relatório</strong> — mostra o fechamento do dia, itens mais vendidos e faturamento.</li>
+  </ul>
+
+  <div class="info">
+    <strong>Dica.</strong> No começo do dia, deixe o Atendente aberto no computador do caixa e o
+    Painel aberto em tela cheia no navegador da TV do salão. As duas telas conversam em tempo real:
+    quando o atendente confirma um pedido, a senha aparece na TV na mesma hora.
+  </div>
+
+  <h3>Fluxo do dia-a-dia</h3>
+  <ol class="passos">
+    <li>Cliente faz o pedido no balcão.</li>
+    <li>Atendente monta o pedido na tela <em>Atendente</em> e clica em <em>Confirmar</em>.</li>
+    <li>O sistema gera uma <strong>senha</strong> (01, 02, 03…) e imprime as vias do cliente e da cozinha.</li>
+    <li>A senha aparece no painel da TV em <em>Em Preparação</em>.</li>
+    <li>Quando a pizza fica pronta, o atendente clica em <em>Pronto</em> na tela.</li>
+    <li>A senha salta pra coluna <em>Pronto</em> da TV, em destaque. Cliente vai buscar.</li>
+    <li>Atendente clica em <em>Entregue</em>. Senha some do painel.</li>
+  </ol>
+
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 3 de 10</div>
+  </div>
+</section>
+
+<!-- ==================== 2. ATENDENTE — MONTAGEM DE PEDIDO ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo"><div class="logo-mark">CG</div><div>CodeGus</div></div>
+    <div class="meta-header">Capítulo 2<br><strong>Atendente</strong></div>
+  </div>
+
+  <h2><span class="num-secao">2</span> Montando um pedido</h2>
+  <p>
+    Esta é a tela mais usada no dia-a-dia. Fica aberta no computador do caixa.
+    À esquerda está o <strong>cardápio</strong>, à direita o <strong>carrinho</strong> do pedido
+    atual, e embaixo as <strong>senhas ativas</strong>.
+  </p>
+
+  <div class="print-wrap">
+    <img src="imgs/01-atendente-inicial.png" alt="Tela do Atendente">
+    <div class="legenda">Tela inicial do Atendente. À esquerda o cardápio, à direita o carrinho vazio.</div>
+  </div>
+
+  <h3>Passo a passo</h3>
+  <ol class="passos">
+    <li>Escolha a <strong>categoria</strong> nas abas do topo (Pizzas Salgadas, Doces, Bebidas…).</li>
+    <li>Clique no <strong>item</strong> desejado. O modal de opções abre.</li>
+    <li>Escolha o <strong>tamanho</strong>, marque <strong>adicionais</strong> se quiser, ajuste a quantidade e clique <em>Adicionar</em>.</li>
+    <li>Repita para os outros itens. O carrinho à direita vai somando o total.</li>
+    <li>Se quiser, escreva uma <strong>observação</strong> no campo amarelo (ex: "sem cebola").</li>
+    <li>Clique <strong>Confirmar Pedido</strong> — a senha é gerada e a impressão dispara.</li>
+  </ol>
+
+  <div class="dica">
+    <strong>Buscar item rápido.</strong> Se seu cardápio for grande, use o campo de busca no
+    topo do cardápio. Digitar "coca" já filtra as bebidas com "coca" no nome.
+  </div>
+
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 4 de 10</div>
+  </div>
+</section>
+
+<!-- ==================== 2b. MEIA-MEIA E DETALHES ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo"><div class="logo-mark">CG</div><div>CodeGus</div></div>
+    <div class="meta-header">Capítulo 2<br><strong>Pizza meia a meia</strong></div>
+  </div>
+
+  <h2><span class="num-secao">2</span> Pizza meia a meia</h2>
+  <p>
+    Quando o cliente quer <strong>dois sabores em uma pizza só</strong>, use a opção "Meia a meia"
+    dentro do modal do item.
+  </p>
+
+  <div class="print-wrap">
+    <img src="imgs/03-atendente-meia-meia.png" alt="Modal com meia-meia ativa">
+    <div class="legenda">Meia a meia ativada: Margherita + Calabresa, tamanho Grande, com borda catupiry.</div>
+  </div>
+
+  <ol class="passos">
+    <li>Abra qualquer pizza salgada (ex: Margherita).</li>
+    <li>Escolha o <strong>tamanho</strong> primeiro (broto, média ou grande).</li>
+    <li>Marque a caixa <strong>Meia a meia</strong>.</li>
+    <li>Aparece a lista de <strong>Segundo sabor</strong> — só sabores do mesmo tamanho.</li>
+    <li>Escolha o segundo sabor. O preço se ajusta automaticamente.</li>
+  </ol>
+
+  <div class="info">
+    <strong>Regra do preço na meia a meia.</strong> O sistema cobra o valor do <strong>sabor mais caro</strong>
+    dos dois. Ex: Margherita G (R$ 59) + Calabresa G (R$ 62) = <strong>R$ 62</strong>.
+    Isso segue o padrão de mercado das pizzarias.
+  </div>
+
+  <h3>Editar item já adicionado ao carrinho</h3>
+  <p>Se errou algo, clique na <strong>linha do item no carrinho</strong> — o modal reabre com tudo preenchido, você ajusta e clica em <em>Atualizar</em>. Pra remover, clique no <strong>×</strong> vermelho.</p>
+
+  <h3>Acompanhar senhas ativas</h3>
+  <p>Embaixo da tela ficam as senhas <em>Prontas</em> (verdes) e <em>Em preparação</em> (amarelas). Cada card tem botões:</p>
+  <ul>
+    <li><strong>Pronto</strong> — marca a senha como pronta e ela salta pra "Pronto" na TV.</li>
+    <li><strong>Entregue</strong> — remove a senha do painel (cliente já pegou).</li>
+    <li><i data-lucide="rotate-ccw" class="ico ico-navy"></i> — devolve para "Em preparação" caso tenha marcado pronto por engano.</li>
+    <li><i data-lucide="printer" class="ico ico-navy"></i> — reimprime as vias caso o comprovante tenha saído mal.</li>
+  </ul>
+
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 5 de 10</div>
+  </div>
+</section>
+
+<!-- ==================== 3. PAINEL TV ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo"><div class="logo-mark">CG</div><div>CodeGus</div></div>
+    <div class="meta-header">Capítulo 3<br><strong>Painel da TV</strong></div>
+  </div>
+
+  <h2><span class="num-secao">3</span> Painel do salão (TV)</h2>
+  <p>
+    Esta é a tela que fica <strong>em tela cheia na TV do salão</strong> pro cliente acompanhar.
+    Duas colunas grandes: <em>Em Preparação</em> à esquerda e <em>Pronto</em> à direita, com destaque
+    ampliado pra última senha pronta.
+  </p>
+
+  <div class="print-wrap medio">
+    <img src="imgs/05-painel-tv.png" alt="Painel da TV">
+    <div class="legenda">Painel com 4 senhas em preparação e a senha 02 pronta em destaque dourado.</div>
+  </div>
+
+  <h3>Como configurar na TV</h3>
+  <ol class="passos">
+    <li>Ligue o computador ou mini-PC conectado à TV.</li>
+    <li>Abra o navegador (Chrome/Edge).</li>
+    <li>Digite o endereço do sistema seguido de <code>/painel</code>. Ex: <code>http://192.168.1.100:3000/painel</code>.</li>
+    <li>Aperte <strong>F11</strong> pro navegador entrar em tela cheia.</li>
+    <li>Pronto. Deixa aberto o dia inteiro.</li>
+  </ol>
+
+  <h3>Propaganda CodeGus</h3>
+  <p>
+    A cada intervalo (padrão: <strong>5 minutos</strong>) o painel troca por alguns segundos por
+    um slide de propaganda CodeGus, depois volta pras senhas automaticamente. Esta é a
+    contrapartida do sistema ser gratuito.
+  </p>
+
+  <div class="print-wrap medio">
+    <img src="imgs/06-painel-slide-codegus.png" alt="Slide CodeGus na TV">
+    <div class="legenda">Exemplo do slide institucional CodeGus, exibido periodicamente.</div>
+  </div>
+
+  <div class="info">
+    <strong>Sem áudio.</strong> Os slides são silenciosos e não interferem no ambiente do salão. Quando
+    entra uma senha nova, o próximo slide é adiado pra não competir com a chamada da senha.
+  </div>
+
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 6 de 10</div>
+  </div>
+</section>
+
+<!-- ==================== 4. CARDÁPIO ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo"><div class="logo-mark">CG</div><div>CodeGus</div></div>
+    <div class="meta-header">Capítulo 4<br><strong>Cardápio</strong></div>
+  </div>
+
+  <h2><span class="num-secao">4</span> Cadastrando o cardápio</h2>
+  <p>
+    A tela de <strong>Cardápio</strong> é usada pelo dono/gerente pra criar categorias, itens,
+    tamanhos, preços e adicionais. O cardápio alimenta a tela do Atendente.
+  </p>
+
+  <div class="print-wrap medio">
+    <img src="imgs/07-admin-cardapio.png" alt="Tela do Cardápio">
+    <div class="legenda">Cardápio organizado por categoria. Cada linha é um item.</div>
+  </div>
+
+  <h3>Criando uma nova categoria</h3>
+  <ol class="passos">
+    <li>Clique em <strong>+ Nova categoria</strong>.</li>
+    <li>Digite o nome (ex: "Pizzas Doces") e clique em <em>Salvar</em>.</li>
+    <li>A categoria aparece imediatamente na lista.</li>
+  </ol>
+
+  <h3>Criando um novo item</h3>
+  <ol class="passos">
+    <li>Clique em <strong>+ Novo item</strong>.</li>
+    <li>Escolha a categoria e digite nome e descrição (ingredientes).</li>
+    <li>Adicione um ou mais <strong>tamanhos</strong> (nome + preço). Pizza geralmente tem 3 (broto/média/grande), bebidas 1 ou 2.</li>
+    <li>Se o item aceita <strong>adicionais</strong> (borda, extra queijo…), adicione também.</li>
+    <li>Clique <em>Salvar</em>.</li>
+  </ol>
+
+  <div class="print-wrap pequeno">
+    <img src="imgs/08-admin-modal-item.png" alt="Modal de item aberto">
+    <div class="legenda">Modal de edição de item com tamanhos e adicionais.</div>
+  </div>
+
+  <div class="dica">
+    <strong>Item esgotado.</strong> Clique no botão verde <em>Disponível</em> pra marcar como
+    <em>Esgotado</em> — o item some da tela do atendente. Clique de novo pra reativar.
+  </div>
+
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 7 de 10</div>
+  </div>
+</section>
+
+<!-- ==================== 5. PROPAGANDAS ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo"><div class="logo-mark">CG</div><div>CodeGus</div></div>
+    <div class="meta-header">Capítulo 5<br><strong>Propagandas</strong></div>
+  </div>
+
+  <h2><span class="num-secao">5</span> Propagandas e configurações</h2>
+  <p>
+    Na tela de Cardápio há uma aba chamada <strong>Propagandas</strong>. Aqui você gerencia os slides
+    que aparecem periodicamente no painel da TV.
+  </p>
+
+  <div class="print-wrap">
+    <img src="imgs/09-admin-propagandas.png" alt="Aba Propagandas">
+    <div class="legenda">Lista de propagandas: a da CodeGus é permanente; propagandas de terceiros podem ser adicionadas.</div>
+  </div>
+
+  <h3>Regras importantes</h3>
+  <ul>
+    <li>A propaganda <strong>CodeGus</strong> é permanente — contrapartida do sistema gratuito.</li>
+    <li>Você pode adicionar <strong>propagandas de terceiros</strong> (ex: parceiros locais, promoções da própria pizzaria).</li>
+    <li><strong>Não é permitido</strong> propagandas do setor de tecnologia (para não competir com a CodeGus).</li>
+    <li>Pause qualquer propaganda de terceiro clicando no botão <em>ativa/pausada</em>.</li>
+  </ul>
+
+  <h3>Configurando o intervalo dos slides</h3>
+  <p>Clique em <strong><i data-lucide="settings" class="ico ico-navy"></i> Configurações</strong> pra ajustar:</p>
+
+  <div class="print-wrap pequeno">
+    <img src="imgs/10-admin-config.png" alt="Modal de configurações">
+    <div class="legenda">Três parâmetros configuráveis dos slides.</div>
+  </div>
+
+  <ul>
+    <li><strong>Intervalo entre slides</strong> — a cada X segundos aparece propaganda (padrão: 300s = 5min).</li>
+    <li><strong>Duração de cada slide</strong> — quanto tempo o slide fica na tela (padrão: 10s).</li>
+    <li><strong>Pausar após senha nova</strong> — quando entra senha, adia o próximo slide em X segundos (padrão: 15s).</li>
+  </ul>
+
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 8 de 10</div>
+  </div>
+</section>
+
+<!-- ==================== 6. RELATÓRIO ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo"><div class="logo-mark">CG</div><div>CodeGus</div></div>
+    <div class="meta-header">Capítulo 6<br><strong>Relatório</strong></div>
+  </div>
+
+  <h2><span class="num-secao">6</span> Relatório do dia</h2>
+  <p>
+    A tela de <strong>Relatório</strong> mostra o fechamento: faturamento, ticket médio,
+    itens mais vendidos e o histórico completo das senhas do dia.
+  </p>
+
+  <div class="print-wrap">
+    <img src="imgs/11-relatorio.png" alt="Relatório do dia">
+    <div class="legenda">Relatório com totais, top itens e lista de senhas do dia.</div>
+  </div>
+
+  <h3>Recursos principais</h3>
+  <ul>
+    <li><strong>Trocar data</strong> — seletor de data no topo pra consultar dias anteriores.</li>
+    <li><strong><i data-lucide="download" class="ico ico-navy"></i> CSV</strong> — baixa a planilha do dia, abre direto no Excel ou Google Sheets.</li>
+    <li><strong>Ticket médio</strong> — faturamento dividido pelo número de pedidos, indicador prático de performance.</li>
+    <li><strong>Top itens</strong> — ranking dos produtos mais vendidos, útil pra ajustes no cardápio e reposição de estoque.</li>
+  </ul>
+
+  <div class="dica">
+    <strong>Dica de rotina.</strong> Ao fechar o caixa, abra o Relatório do dia, confira os totais e exporte o CSV pra guardar como comprovante. Um clique em "<i data-lucide="download" class="ico ico-navy"></i> CSV" salva tudo.
+  </div>
+
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 9 de 10</div>
+  </div>
+</section>
+
+<!-- ==================== 7. IMPRESSÃO + ASSINATURA ==================== -->
+<section class="secao">
+  <div class="conteudo">
+  <div class="cabecalho-secao">
+    <div class="logo"><div class="logo-mark">CG</div><div>CodeGus</div></div>
+    <div class="meta-header">Capítulo 7<br><strong>Impressão</strong></div>
+  </div>
+
+  <h2><span class="num-secao">7</span> Impressão do pedido</h2>
+  <p>
+    Ao confirmar o pedido, o sistema abre uma janela e imprime automaticamente <strong>duas vias</strong>:
+    uma para o cliente (com preços) e outra para a cozinha (com a senha em destaque e sem preços).
+  </p>
+
+  <div class="print-lado-a-lado">
+    <div>
+      <img src="imgs/12-imprimir-cliente.png" alt="Via do cliente">
+      <div class="legenda">Via do cliente — com preços e total.</div>
+    </div>
+    <div>
+      <img src="imgs/13-imprimir-cozinha.png" alt="Via da cozinha">
+      <div class="legenda">Via da cozinha — senha gigante, sem preços.</div>
+    </div>
+  </div>
+
+  <div class="dica">
+    <strong>Reimprimir.</strong> Se algo saiu errado, clique no ícone <i data-lucide="printer" class="ico ico-navy"></i> no card
+    da senha ou abra o detalhe da senha para reimprimir cliente ou cozinha separadamente.
+  </div>
+
+  <div class="assinatura-final">
+    <h3>Suporte CodeGus</h3>
+    <p>Qualquer dúvida ou ajuste no sistema, é só nos chamar.</p>
+    <div class="contato">
+      <div><i data-lucide="globe" class="ico ico-duck"></i> codegus.com</div>
+      <div><i data-lucide="phone" class="ico ico-duck"></i> (47) 98496-5787</div>
+    </div>
+  </div>
+
+  </div>
+  <div class="rodape-pagina">
+    <div class="marca">CodeGus · codegus.com</div>
+    <div>Página 10 de 10</div>
+  </div>
+</section>
+
+<script>
+  lucide.createIcons();
+</script>
+</body>
+</html>

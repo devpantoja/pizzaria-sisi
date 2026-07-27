@@ -1,0 +1,28 @@
+# Dependências
+node_modules/
+
+# Build output
+dist/
+
+# Banco local (só do dev; produção usa data/ ao lado do exe)
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# Logs
+*.log
+/tmp/*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Env
+.env
+.env.local

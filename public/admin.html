@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cardápio — Pizzaria</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  body {
+    padding: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 18px;
+    border-bottom: 2px solid var(--primaria);
+    margin-bottom: 24px;
+  }
+  header h1 {
+    font-size: 22px;
+    color: var(--primaria);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  header .logo-mark {
+    width: 34px;
+    height: 34px;
+    background: var(--primaria);
+    color: var(--branco);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 13px;
+  }
+  header nav { display: flex; gap: 16px; }
+  header nav a {
+    color: var(--cinza-500);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  header nav a:hover { color: var(--acento); }
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .toolbar h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--cinza-500);
+    font-weight: 700;
+  }
+  .toolbar .acoes { display: flex; gap: 8px; }
+
+  .btn {
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+  .btn-primario { background: var(--acento); color: var(--branco); }
+  .btn-primario:hover { background: var(--acento-escuro); }
+  .btn-secundario { background: var(--primaria); color: var(--branco); }
+  .btn-secundario:hover { background: var(--primaria-clara); }
+  .btn-cinza { background: var(--cinza-200); color: var(--cinza-700); }
+  .btn-cinza:hover { background: var(--cinza-300); }
+  .btn-perigo { background: transparent; color: var(--acento); }
+  .btn-perigo:hover { background: var(--acento-claro); }
+  .btn-pequeno { padding: 5px 10px; font-size: 12px; }
+
+  .categoria-bloco {
+    background: white;
+    border: 1px solid var(--cinza-200);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .categoria-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    background: var(--primaria);
+    color: white;
+  }
+  .categoria-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .categoria-header h3 .qty {
+    background: rgba(255,255,255,0.15);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .categoria-header .acoes { display: flex; gap: 6px; }
+  .categoria-header .btn-cat {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+  .categoria-header .btn-cat:hover { background: rgba(255,255,255,0.25); }
+
+  .categoria-itens {
+    padding: 8px;
+  }
+
+  .item-linha {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 8px;
+    gap: 12px;
+  }
+  .item-linha:hover { background: var(--cinza-100); }
+  .item-linha.indisponivel .nome { color: var(--cinza-500); text-decoration: line-through; }
+
+  .item-linha .info .nome {
+    font-weight: 600;
+    color: var(--primaria);
+    font-size: 14px;
+  }
+  .item-linha .info .desc {
+    font-size: 12px;
+    color: var(--cinza-500);
+    margin-top: 2px;
+  }
+  .item-linha .info .tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .item-linha .info .tag {
+    background: var(--cinza-200);
+    color: var(--cinza-700);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .item-linha .info .tag.tamanho { background: #dbeafe; color: #1e40af; }
+  .item-linha .info .tag.adicional { background: #fef3c7; color: #92400e; }
+
+  .item-linha .esgotado-toggle {
+    background: var(--verde);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+  }
+  .item-linha.indisponivel .esgotado-toggle { background: var(--cinza-500); }
+
+  .item-linha .acoes { display: flex; gap: 4px; }
+
+  .vazio {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--cinza-500);
+    background: white;
+    border: 1px dashed var(--cinza-300);
+    border-radius: 10px;
+  }
+
+  /* ========== Modal ========== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .modal-overlay.aberto { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal h3 {
+    font-size: 18px;
+    color: var(--primaria);
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--cinza-200);
+  }
+  .campo {
+    margin-bottom: 14px;
+  }
+  .campo label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cinza-700);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .campo input, .campo select, .campo textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--cinza-300);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--primaria);
+  }
+  .campo input:focus, .campo select:focus, .campo textarea:focus {
+    outline: none;
+    border-color: var(--acento);
+  }
+
+  .sub-lista {
+    background: var(--cinza-100);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 14px;
+  }
+  .sub-lista .sub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .sub-lista .sub-header label {
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--cinza-500);
+    letter-spacing: 0.5px;
+  }
+  .sub-item {
+    display: grid;
+    grid-template-columns: 1fr 100px auto;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .sub-item input {
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+  .sub-item button {
+    background: transparent;
+    color: var(--acento);
+    padding: 0 8px;
+    font-size: 18px;
+    line-height: 1;
+    border: none;
+    cursor: pointer;
+  }
+
+  .rodape-modal {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--cinza-200);
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primaria);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 300;
+    animation: toastEntra 0.2s ease-out;
+  }
+  .toast.erro { background: var(--acento); }
+  @keyframes toastEntra {
+    from { opacity: 0; transform: translate(-50%, -10px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+</style>
+</head>
+<body>
+
+<div id="statusConexao" class="status-conexao">conectando…</div>
+
+<header>
+  <h1>
+    <span class="logo-mark">CG</span>
+    Administração
+  </h1>
+  <nav>
+    <a href="/atendente">Atendente</a>
+    <a href="/painel" target="_blank">Painel TV ↗</a>
+    <a href="/relatorio">Relatório</a>
+  </nav>
+</header>
+
+<div class="abas-topo" style="display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 2px solid var(--cinza-200);">
+  <button class="aba-btn ativa" data-aba="cardapio" style="padding: 12px 22px; background: transparent; border: none; font-family: inherit; font-size: 14px; font-weight: 700; color: var(--primaria); cursor: pointer; border-bottom: 3px solid var(--acento); margin-bottom: -2px;">Cardápio</button>
+  <button class="aba-btn" data-aba="propagandas" style="padding: 12px 22px; background: transparent; border: none; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--cinza-500); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px;">Propagandas</button>
+  <button class="aba-btn" data-aba="sistema" style="padding: 12px 22px; background: transparent; border: none; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--cinza-500); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px;">Sistema</button>
+</div>
+
+<div id="secaoCardapio">
+  <div class="toolbar">
+    <h2>Categorias e itens</h2>
+    <div class="acoes">
+      <button class="btn btn-secundario" onclick="abrirModalCategoria()">+ Nova categoria</button>
+      <button class="btn btn-primario" onclick="abrirModalItem()">+ Novo item</button>
+    </div>
+  </div>
+  <div id="cardapio"></div>
+</div>
+
+<div id="secaoPropagandas" style="display: none;">
+  <div class="toolbar">
+    <h2>Slides de propaganda</h2>
+    <div class="acoes">
+      <button class="btn btn-secundario" onclick="abrirModalConfig()">⚙ Configurações</button>
+      <button class="btn btn-primario" onclick="abrirModalPropaganda()">+ Nova propaganda</button>
+    </div>
+  </div>
+  <div id="listaPropagandas"></div>
+</div>
+
+<div id="secaoSistema" style="display: none;">
+  <div class="toolbar">
+    <h2>Sistema</h2>
+  </div>
+
+  <div style="background: white; border: 1px solid var(--cinza-200); border-radius: 12px; padding: 24px; margin-bottom: 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+      <div>
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--cinza-500); font-weight: 700; margin-bottom: 4px;">Versão instalada</div>
+        <div style="font-size: 32px; font-weight: 800; color: var(--primaria); line-height: 1;">
+          v<span id="verLocal">…</span>
+        </div>
+        <div style="font-size: 12px; color: var(--cinza-500); margin-top: 6px;">
+          Última checagem: <span id="verUltimaCheca">nunca</span>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-secundario" onclick="checarVersao()" id="btnCheca">
+          Verificar atualizações
+        </button>
+      </div>
+    </div>
+
+    <div id="boxAtualizacao" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--cinza-200); display: none;">
+      <div id="conteudoAtualizacao"></div>
+    </div>
+  </div>
+
+  <div style="background: var(--cinza-100); border: 1px solid var(--cinza-200); border-radius: 12px; padding: 20px; font-size: 13px; color: var(--cinza-700); line-height: 1.6;">
+    <strong style="color: var(--primaria);">Sobre atualizações.</strong>
+    O sistema verifica automaticamente novas versões a cada 6 horas.
+    Quando uma nova versão for lançada pela CodeGus, aparecerá um botão de instalação nesta tela.
+    Você pode também verificar manualmente a qualquer momento.
+    <br><br>
+    Durante a atualização, o sistema fica indisponível por alguns segundos enquanto reinicia.
+  </div>
+</div>
+
+<!-- Modal Categoria -->
+<div id="modalCategoria" class="modal-overlay" onclick="fecharModal(event, 'modalCategoria')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="tituloCategoria">Nova categoria</h3>
+    <input type="hidden" id="catId">
+    <div class="campo">
+      <label>Nome</label>
+      <input type="text" id="catNome" placeholder="Ex: Pizzas Salgadas">
+    </div>
+    <div class="campo">
+      <label>Ordem de exibição</label>
+      <input type="number" id="catOrdem" value="0">
+    </div>
+    <div class="rodape-modal">
+      <button class="btn btn-cinza" onclick="fecharModal(null, 'modalCategoria')">Cancelar</button>
+      <button class="btn btn-primario" onclick="salvarCategoria()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Item -->
+<div id="modalItem" class="modal-overlay" onclick="fecharModal(event, 'modalItem')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="tituloItem">Novo item</h3>
+    <input type="hidden" id="itemId">
+    <div class="campo">
+      <label>Nome</label>
+      <input type="text" id="itemNome" placeholder="Ex: Margherita">
+    </div>
+    <div class="campo">
+      <label>Categoria</label>
+      <select id="itemCategoria"></select>
+    </div>
+    <div class="campo">
+      <label>Descrição (ingredientes)</label>
+      <textarea id="itemDescricao" rows="2" placeholder="Molho, mussarela, tomate, manjericão"></textarea>
+    </div>
+
+    <div class="sub-lista">
+      <div class="sub-header">
+        <label>Tamanhos e preços</label>
+        <button class="btn btn-cinza btn-pequeno" onclick="adicionarTamanho()">+ tamanho</button>
+      </div>
+      <div id="tamanhos"></div>
+    </div>
+
+    <div class="sub-lista">
+      <div class="sub-header">
+        <label>Adicionais</label>
+        <button class="btn btn-cinza btn-pequeno" onclick="adicionarAdicional()">+ adicional</button>
+      </div>
+      <div id="adicionais"></div>
+    </div>
+
+    <div class="rodape-modal">
+      <button class="btn btn-cinza" onclick="fecharModal(null, 'modalItem')">Cancelar</button>
+      <button class="btn btn-primario" onclick="salvarItem()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Propaganda -->
+<div id="modalPropaganda" class="modal-overlay" onclick="fecharModal(event, 'modalPropaganda')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="tituloPropaganda">Nova propaganda</h3>
+    <input type="hidden" id="propId">
+    <div class="campo">
+      <label>Título</label>
+      <input type="text" id="propTitulo" placeholder="Ex: CodeGus">
+    </div>
+    <div class="campo">
+      <label>Subtítulo</label>
+      <input type="text" id="propSubtitulo" placeholder="Ex: Sistemas sob medida">
+    </div>
+    <div class="campo">
+      <label>Corpo</label>
+      <textarea id="propCorpo" rows="3" placeholder="codegus.com · (47) 98496-5787"></textarea>
+    </div>
+    <div class="campo">
+      <label>URL da imagem (opcional)</label>
+      <input type="text" id="propImagemUrl" placeholder="https://…">
+    </div>
+    <div class="campo">
+      <label>Tipo</label>
+      <select id="propTipo">
+        <option value="codegus">CodeGus</option>
+        <option value="terceiro">Terceiros</option>
+      </select>
+    </div>
+    <div class="rodape-modal">
+      <button class="btn btn-cinza" onclick="fecharModal(null, 'modalPropaganda')">Cancelar</button>
+      <button class="btn btn-primario" onclick="salvarPropaganda()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Config -->
+<div id="modalConfig" class="modal-overlay" onclick="fecharModal(event, 'modalConfig')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3>Configurações de exibição</h3>
+    <div class="campo">
+      <label>Intervalo entre slides (segundos)</label>
+      <input type="number" id="cfgIntervalo" min="30" step="30">
+      <small style="color: var(--cinza-500); font-size: 11px;">A cada X segundos o painel troca pra propaganda.</small>
+    </div>
+    <div class="campo">
+      <label>Duração de cada slide (segundos)</label>
+      <input type="number" id="cfgDuracao" min="3" max="60">
+      <small style="color: var(--cinza-500); font-size: 11px;">Quanto tempo o slide fica na tela.</small>
+    </div>
+    <div class="campo">
+      <label>Pausar após senha nova (segundos)</label>
+      <input type="number" id="cfgPausa" min="0" max="60">
+      <small style="color: var(--cinza-500); font-size: 11px;">Ao entrar senha nova, adia a próxima propaganda em X segundos.</small>
+    </div>
+    <div class="rodape-modal">
+      <button class="btn btn-cinza" onclick="fecharModal(null, 'modalConfig')">Cancelar</button>
+      <button class="btn btn-primario" onclick="salvarConfig()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="/admin.js"></script>
+</body>
+</html>

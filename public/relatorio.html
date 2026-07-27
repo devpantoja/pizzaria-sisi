@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relatório do Dia — Pizzaria</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  body {
+    padding: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--primaria);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  header h1 {
+    font-size: 22px;
+    color: var(--primaria);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  header .logo-mark {
+    width: 34px;
+    height: 34px;
+    background: var(--primaria);
+    color: var(--branco);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 13px;
+  }
+  header nav { display: flex; gap: 16px; align-items: center; }
+  header nav a {
+    color: var(--cinza-500);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  header nav a:hover { color: var(--acento); }
+  header nav input {
+    padding: 6px 10px;
+    border: 1px solid var(--cinza-300);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--primaria);
+  }
+
+  .btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primario { background: var(--acento); color: white; }
+  .btn-primario:hover { background: var(--acento-escuro); }
+  .btn-cinza { background: var(--cinza-200); color: var(--cinza-700); }
+  .btn-cinza:hover { background: var(--cinza-300); }
+
+  .cartoes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .cartao {
+    background: white;
+    border: 1px solid var(--cinza-200);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .cartao .rotulo {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--cinza-500);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .cartao .valor {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--primaria);
+    line-height: 1.1;
+  }
+  .cartao .valor.verde { color: var(--verde); }
+  .cartao .sublinha {
+    font-size: 11px;
+    color: var(--cinza-500);
+    margin-top: 6px;
+  }
+
+  .secao {
+    margin-bottom: 24px;
+  }
+  .secao > h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--cinza-500);
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border: 1px solid var(--cinza-200);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 13px;
+  }
+  table th, table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--cinza-200);
+  }
+  table th {
+    background: var(--primaria);
+    color: white;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  table tbody tr:hover { background: var(--cinza-100); }
+  table tbody tr:last-child td { border-bottom: none; }
+  table td.n { text-align: right; font-variant-numeric: tabular-nums; }
+  table td.senha-num { font-weight: 900; color: var(--primaria); font-size: 15px; }
+
+  .status-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .status-tag.entregue { background: #d1fae5; color: #047857; }
+  .status-tag.pronto { background: #fef3c7; color: #92400e; }
+  .status-tag.preparando { background: #dbeafe; color: #1e40af; }
+
+  .vazio {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--cinza-500);
+    background: white;
+    border: 1px dashed var(--cinza-300);
+    border-radius: 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>
+    <span class="logo-mark">CG</span>
+    Relatório do dia
+  </h1>
+  <nav>
+    <input type="date" id="dataInput">
+    <button class="btn btn-cinza" onclick="exportarCSV()">↓ CSV</button>
+    <a href="/atendente">Atendente</a>
+    <a href="/admin">Cardápio</a>
+  </nav>
+</header>
+
+<div class="cartoes" id="cartoes"></div>
+
+<div class="secao">
+  <h2>Itens mais vendidos</h2>
+  <div id="topItens"></div>
+</div>
+
+<div class="secao">
+  <h2>Pedidos do dia</h2>
+  <div id="listaPedidos"></div>
+</div>
+
+<script src="/relatorio.js"></script>
+</body>
+</html>

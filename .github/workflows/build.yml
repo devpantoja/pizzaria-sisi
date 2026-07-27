@@ -1,0 +1,115 @@
+name: Build Windows Installer
+
+# Roda em:
+#   • push em main           → gera release DEV "dev-latest" (prerelease, sobrescrita)
+#   • push de tag v*         → gera release OFICIAL v0.X.X
+#   • workflow_dispatch      → botão manual "Run workflow" no GitHub
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+# Permite ao workflow criar releases
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Ler versão do package.json
+        id: pkg
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json | ConvertFrom-Json).version
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "Versão: $version"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Empacotar (build.js win)
+        run: node build.js win
+
+      - name: Instalar Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Compilar instalador
+        shell: pwsh
+        run: |
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          & $iscc "installer/setup.iss" "/DAppVersion=${{ steps.pkg.outputs.version }}"
+
+      - name: Renomear artefato
+        shell: pwsh
+        run: |
+          $src = Get-ChildItem "dist/installer/SisiPizzeria-Setup-*.exe" | Select-Object -First 1
+          $dst = "dist/installer/SisiPizzeria-Setup-win.exe"
+          Copy-Item $src.FullName $dst
+          Get-ChildItem dist/installer
+
+      - name: Upload artifact (retenção 30 dias)
+        uses: actions/upload-artifact@v4
+        with:
+          name: SisiPizzeria-Windows-v${{ steps.pkg.outputs.version }}
+          path: dist/installer/SisiPizzeria-Setup-*.exe
+          retention-days: 30
+
+      # ============================================================
+      # RELEASES
+      # ============================================================
+
+      # Push em main → release "dev-latest" (prerelease, sobrescrita)
+      - name: Publicar release DEV (branch main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: dev-latest
+          name: "Build de desenvolvimento (${{ github.sha }})"
+          body: |
+            Build automático da branch `main`.
+
+            **Não é uma versão oficial** — pra testes internos apenas.
+            Cliente final não recebe atualização a partir daqui.
+
+            - Versão: ${{ steps.pkg.outputs.version }}
+            - Commit: ${{ github.sha }}
+            - Build: ${{ github.run_id }}
+          prerelease: true
+          files: |
+            dist/installer/SisiPizzeria-Setup-win.exe
+
+      # Tag v* → release oficial
+      - name: Publicar release OFICIAL (tag v*)
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          # tag_name é omitido = usa a tag do trigger
+          name: "v${{ steps.pkg.outputs.version }}"
+          body: |
+            ## Sisi Pizzeria — v${{ steps.pkg.outputs.version }}
+
+            Publicado automaticamente pelo GitHub Actions.
+
+            ### Como atualizar
+            No sistema, acesse **Cardápio → Sistema → Verificar atualizações**.
+            Clique em "Atualizar agora" quando aparecer a nova versão.
+
+            ### Instalação nova
+            Baixe `SisiPizzeria-Setup-win.exe` abaixo e execute como administrador.
+          prerelease: false
+          files: |
+            dist/installer/SisiPizzeria-Setup-win.exe
