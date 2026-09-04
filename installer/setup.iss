@@ -16,7 +16,7 @@
 #define AppPublisher   "CodeGus"
 #define AppURL         "https://codegus.com"
 #define AppDataDir     "SisiPizzeria"
-#define LauncherExe    "launcher.vbs"
+#define LauncherExe    "launcher.bat"
 
 [Setup]
 AppId={{4A5C8B7D-9E12-4F3A-B2C1-8E5F6D7A9B0C}

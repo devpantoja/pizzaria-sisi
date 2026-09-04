@@ -1,6 +1,6 @@
 {
   "name": "pizzaria-senhas",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Sistema de senhas de atendimento para pizzaria — CodeGus",
   "type": "module",
   "main": "server.js",

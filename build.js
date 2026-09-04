@@ -98,17 +98,26 @@ console.log('  ✓ dist/node_modules/better-sqlite3/');
 // ============= 5. Launchers =============
 console.log('▸ Gerando launchers…');
 
-// Windows: launcher.bat (visível) + launcher.vbs (esconde o CMD)
+// Windows: launcher.bat auto-oculto.
+//   Se foi chamado com janela visivel (primeira execucao), se relanca via
+//   powershell -WindowStyle Hidden e sai — sem depender de .vbs (associacao
+//   de arquivo .vbs em algumas maquinas do cliente aponta pro navegador e
+//   quebra o atalho). Powershell existe em toda instalacao Windows moderna.
 const launcherBat = `@echo off
+if not "%~1"=="hidden" (
+  start "" /b powershell -NoProfile -WindowStyle Hidden -Command "Start-Process -WindowStyle Hidden -FilePath '%~f0' -ArgumentList 'hidden'"
+  exit /b
+)
 cd /d "%~dp0"
 if not exist "data" mkdir data
 "%~dp0runtime\\node.exe" "%~dp0server.cjs"
 `;
 writeFileSync(`${DIST}/launcher.bat`, launcherBat);
 
-// VBS wrapper: roda o .bat escondido (sem janela do CMD)
+// VBS wrapper mantido como fallback (caso o cliente prefira o atalho antigo).
+// Nao e mais o alvo dos atalhos criados pelo instalador — ver setup.iss.
 const launcherVbs = `Set WshShell = CreateObject("WScript.Shell")
-WshShell.Run chr(34) & WScript.ScriptFullName & "\\..\\launcher.bat" & Chr(34), 0
+WshShell.Run chr(34) & WScript.ScriptFullName & "\\..\\launcher.bat" & Chr(34) & " hidden", 0
 Set WshShell = Nothing
 `;
 writeFileSync(`${DIST}/launcher.vbs`, launcherVbs);
