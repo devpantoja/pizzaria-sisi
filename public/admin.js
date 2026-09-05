@@ -27,7 +27,6 @@ document.querySelectorAll('.aba-btn').forEach(btn => {
     $('secaoPropagandas').style.display = aba === 'propagandas' ? '' : 'none';
     $('secaoSistema').style.display = aba === 'sistema' ? '' : 'none';
     if (aba === 'propagandas') carregarPropagandas();
-    if (aba === 'sistema') carregarSistema();
   };
 });
 
@@ -440,75 +439,6 @@ window.salvarConfig = async function() {
   } catch (e) { toast(e.message, true); }
 };
 
-// ============= Sistema (versão + auto-update) =============
-async function carregarSistema() {
-  try {
-    const info = await api('GET', '/api/versao');
-    renderSistema(info);
-  } catch (e) {
-    $('verLocal').textContent = '?';
-    toast('Erro ao carregar versão: ' + e.message, true);
-  }
-}
-
-function renderSistema(info) {
-  $('verLocal').textContent = info.versao_local || '?';
-  $('verUltimaCheca').textContent = info.ultima_checagem
-    ? new Date(info.ultima_checagem).toLocaleString('pt-BR')
-    : 'nunca';
-
-  const box = $('boxAtualizacao');
-  const conteudo = $('conteudoAtualizacao');
-
-  if (!info.disponivel) {
-    box.style.display = 'none';
-    return;
-  }
-
-  const d = info.disponivel;
-  box.style.display = 'block';
-  const mb = (d.tamanho_bytes / 1024 / 1024).toFixed(1);
-  conteudo.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
-      <div style="flex: 1;">
-        <div style="display: inline-block; background: var(--dourado); color: white; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border-radius: 10px; font-weight: 700; margin-bottom: 8px;">
-          Nova versão disponível
-        </div>
-        <div style="font-size: 22px; font-weight: 800; color: var(--primaria);">v${escape(d.versao)}</div>
-        <div style="font-size: 12px; color: var(--cinza-500); margin-top: 4px;">
-          ${mb} MB &nbsp;·&nbsp; publicada em ${new Date(d.publicada_em).toLocaleDateString('pt-BR')}
-        </div>
-        ${d.notas ? `<div style="margin-top: 12px; padding: 10px 14px; background: var(--cinza-100); border-radius: 6px; font-size: 12px; color: var(--cinza-700); white-space: pre-wrap; max-height: 150px; overflow-y: auto;">${escape(d.notas)}</div>` : ''}
-      </div>
-      <button class="btn btn-primario" onclick="aplicarAtualizacao()" id="btnAplicar" style="white-space: nowrap;">
-        Atualizar agora
-      </button>
-    </div>
-  `;
-}
-
-window.checarVersao = async function() {
-  const btn = $('btnCheca');
-  btn.disabled = true;
-  btn.textContent = 'Verificando…';
-  try {
-    const r = await api('POST', '/api/versao/checar');
-    if (r.erro) {
-      toast('Falha ao verificar: ' + r.erro, true);
-    } else if (r.atualizada) {
-      toast('Você está na versão mais recente ✓');
-    } else {
-      toast(`Nova versão disponível: v${r.disponivel.versao}`);
-    }
-    await carregarSistema();
-  } catch (e) {
-    toast('Erro: ' + e.message, true);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Verificar atualizações';
-  }
-};
-
 window.zerarSenhas = async function() {
   if (!confirm('Zerar TODAS as senhas ativas e voltar o contador para 01?\n\nO histórico do dia continua no Relatório, mas as senhas em preparação e prontas somem do painel.')) return;
   const btn = $('btnZerar');
@@ -522,23 +452,6 @@ window.zerarSenhas = async function() {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Zerar senhas';
-  }
-};
-
-window.aplicarAtualizacao = async function() {
-  if (!confirm('Atualizar agora? O sistema ficará indisponível por alguns segundos.')) return;
-  const btn = $('btnAplicar');
-  btn.disabled = true;
-  btn.textContent = 'Baixando…';
-  try {
-    await api('POST', '/api/versao/atualizar');
-    toast('Atualização iniciada. Recarregue em 30s.', 'sucesso');
-    // Espera 8s e recarrega — servidor deve ter reiniciado
-    setTimeout(() => location.reload(), 8000);
-  } catch (e) {
-    toast('Erro: ' + e.message, true);
-    btn.disabled = false;
-    btn.textContent = 'Atualizar agora';
   }
 };
 
@@ -609,6 +522,22 @@ window.importarBackup = async function(ev) {
   }
 };
 
+// ============= Sessao =============
+window.sair = async function(ev) {
+  if (ev) ev.preventDefault();
+  try { await fetch('/api/logout', { method: 'POST' }); } catch {}
+  location.href = '/login';
+};
+
+async function hidratarSessao() {
+  try {
+    const r = await fetch('/api/sessao');
+    const s = await r.json();
+    if (s.auth_habilitado && s.autenticado) $('linkSair').style.display = '';
+  } catch {}
+}
+
 // ============= Boot =============
 conectar();
 carregar();
+hidratarSessao();

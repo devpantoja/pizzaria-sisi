@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sisi Pizzeria — Entrar</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primaria) 0%, var(--primaria-clara) 100%);
+      padding: 24px;
+    }
+    .login-card {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .login-card h1 {
+      margin: 0 0 4px 0;
+      color: var(--primaria);
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .login-card .subt {
+      color: var(--cinza-500);
+      font-size: 13px;
+      margin-bottom: 28px;
+    }
+    .login-card label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--cinza-500);
+      margin-bottom: 6px;
+    }
+    .login-card input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--cinza-200);
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: inherit;
+      box-sizing: border-box;
+      transition: border 0.15s;
+    }
+    .login-card input:focus {
+      outline: none;
+      border-color: var(--acento);
+    }
+    .login-card button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 13px;
+      background: var(--acento);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .login-card button:hover:not(:disabled) { background: var(--acento-escuro); }
+    .login-card button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .erro {
+      background: var(--acento-claro);
+      color: var(--acento-escuro);
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-top: 14px;
+      display: none;
+    }
+    .erro.mostrar { display: block; }
+    .marca {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 1px;
+    }
+    .publico {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+    .publico a { color: var(--cinza-500); text-decoration: none; }
+    .publico a:hover { color: var(--acento); }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="login-card">
+      <h1>Sisi Pizzeria</h1>
+      <div class="subt">Entre com sua senha</div>
+      <form id="formLogin">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" autocomplete="current-password" required autofocus>
+        <button type="submit" id="btnEntrar">Entrar</button>
+        <div class="erro" id="msgErro"></div>
+      </form>
+      <div class="publico">
+        <a href="/painel">Só quer ver o painel da TV? →</a>
+      </div>
+    </div>
+    <div class="marca">CODEGUS · SISTEMAS SOB MEDIDA</div>
+  </div>
+  <script src="/login.js"></script>
+</body>
+</html>

@@ -331,6 +331,7 @@
     <a href="/atendente">Atendente</a>
     <a href="/painel" target="_blank">Painel TV ↗</a>
     <a href="/relatorio">Relatório</a>
+    <a href="#" id="linkSair" style="display:none;" onclick="sair(event)">Sair</a>
   </nav>
 </header>
 
@@ -365,38 +366,6 @@
 <div id="secaoSistema" style="display: none;">
   <div class="toolbar">
     <h2>Sistema</h2>
-  </div>
-
-  <div style="background: white; border: 1px solid var(--cinza-200); border-radius: 12px; padding: 24px; margin-bottom: 16px;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
-      <div>
-        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--cinza-500); font-weight: 700; margin-bottom: 4px;">Versão instalada</div>
-        <div style="font-size: 32px; font-weight: 800; color: var(--primaria); line-height: 1;">
-          v<span id="verLocal">…</span>
-        </div>
-        <div style="font-size: 12px; color: var(--cinza-500); margin-top: 6px;">
-          Última checagem: <span id="verUltimaCheca">nunca</span>
-        </div>
-      </div>
-      <div>
-        <button class="btn btn-secundario" onclick="checarVersao()" id="btnCheca">
-          Verificar atualizações
-        </button>
-      </div>
-    </div>
-
-    <div id="boxAtualizacao" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--cinza-200); display: none;">
-      <div id="conteudoAtualizacao"></div>
-    </div>
-  </div>
-
-  <div style="background: var(--cinza-100); border: 1px solid var(--cinza-200); border-radius: 12px; padding: 20px; font-size: 13px; color: var(--cinza-700); line-height: 1.6; margin-bottom: 16px;">
-    <strong style="color: var(--primaria);">Sobre atualizações.</strong>
-    O sistema verifica automaticamente novas versões a cada 6 horas.
-    Quando uma nova versão for lançada pela CodeGus, aparecerá um botão de instalação nesta tela.
-    Você pode também verificar manualmente a qualquer momento.
-    <br><br>
-    Durante a atualização, o sistema fica indisponível por alguns segundos enquanto reinicia.
   </div>
 
   <!-- Backup / Restaurar -->

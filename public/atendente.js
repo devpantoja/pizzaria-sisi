@@ -602,6 +602,26 @@ function toast(msg, tipo = 'info') {
   setTimeout(() => t.remove(), 2800);
 }
 
+// ============= Sessao (mostra Sair, esconde/mostra Cardapio conforme papel) =============
+window.sair = async function(ev) {
+  if (ev) ev.preventDefault();
+  try { await fetch('/api/logout', { method: 'POST' }); } catch {}
+  location.href = '/login';
+};
+
+async function hidratarSessao() {
+  try {
+    const r = await fetch('/api/sessao');
+    const s = await r.json();
+    if (!s.auth_habilitado) return; // modo aberto, nao mostra nada
+    if (s.autenticado) {
+      $('linkSair').style.display = '';
+      if (s.papel === 'admin') $('linkAdmin').style.display = '';
+    }
+  } catch {}
+}
+
 // ============= Boot =============
 conectar();
 carregarCardapio();
+hidratarSessao();

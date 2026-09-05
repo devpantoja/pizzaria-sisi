@@ -1,0 +1,43 @@
+# compose.yaml — Sisi Pizzeria (producao)
+#
+# Pre-requisitos na VM:
+#   - Rede externa `codegus-cobranca_cobranca-net` ja existe (criada pelo compose do cobranca).
+#     Se subir sozinho, roda: docker network create codegus-cobranca_cobranca-net
+#   - Arquivo /etc/sisi-pizzaria.env com SESSION_SECRET, SENHA_ATENDENTE, SENHA_ADMIN.
+#
+# Deploy:
+#   cd /opt/sisi-pizzaria && git pull && docker compose up -d --build
+#
+# Update do Caddyfile do cobranca precisa apontar sisi.codegus.com pra sisi-pizzaria:3000
+
+services:
+  sisi:
+    build: .
+    container_name: sisi-pizzaria
+    restart: unless-stopped
+    env_file:
+      - /etc/sisi-pizzaria.env
+    environment:
+      PORT: 3000
+      TZ: America/Sao_Paulo
+    volumes:
+      # Persiste o SQLite entre restarts/redeploys
+      - sisi-data:/app/data
+    networks:
+      # Mesma rede do cobranca-caddy pra Caddy resolver por nome
+      - cobranca-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/config"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  sisi-data:
+    name: sisi-pizzaria-data
+
+networks:
+  cobranca-net:
+    external: true
+    name: codegus-cobranca_cobranca-net

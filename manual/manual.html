@@ -654,7 +654,7 @@
       <li><span class="titulo">Propagandas e configurações</span><span class="pagina">pág. 8</span></li>
       <li><span class="titulo">Relatório do dia</span><span class="pagina">pág. 9</span></li>
       <li><span class="titulo">Impressão do pedido</span><span class="pagina">pág. 10</span></li>
-      <li><span class="titulo">Sistema (atualizações e zerar senhas)</span><span class="pagina">pág. 11</span></li>
+      <li><span class="titulo">Sistema (login, backup e zerar senhas)</span><span class="pagina">pág. 11</span></li>
     </ol>
   </div>
 
@@ -829,7 +829,7 @@
   <ol class="passos">
     <li>Ligue o computador ou mini-PC conectado à TV.</li>
     <li>Abra o navegador (Chrome/Edge).</li>
-    <li>Digite o endereço do sistema seguido de <code>/painel</code>. Ex: <code>http://192.168.1.100:3000/painel</code>.</li>
+    <li>Digite o endereço <code>https://sisi.codegus.com/painel</code> na barra do navegador.</li>
     <li>Aperte <strong>F11</strong> pro navegador entrar em tela cheia.</li>
     <li>Pronto. Deixa aberto o dia inteiro.</li>
   </ol>
@@ -1050,33 +1050,39 @@
     <div class="meta-header">Capítulo 8<br><strong>Sistema</strong></div>
   </div>
 
-  <h2><span class="num-secao">8</span> Sistema (atualizações e zerar senhas)</h2>
+  <h2><span class="num-secao">8</span> Sistema (login, backup e zerar senhas)</h2>
   <p>
-    Na tela do <strong>Cardápio</strong> (<code>/admin</code>), a aba <strong>Sistema</strong> reúne duas
-    ferramentas importantes: <strong>manter o programa atualizado</strong> e <strong>zerar as senhas do dia</strong>.
+    O sistema é acessado pelo navegador em <strong>https://sisi.codegus.com</strong>. Duas senhas controlam o acesso:
+    a <strong>senha de atendente</strong> (pra lançar pedidos) e a <strong>senha de admin</strong> (pra editar cardápio,
+    ver relatório e fazer backup). O <strong>Painel da TV</strong> continua aberto (sem senha) porque o cliente
+    precisa ver.
   </p>
 
-  <h3>Atualizar o sistema</h3>
-  <p>
-    O sistema verifica <strong>sozinho a cada 6 horas</strong> se a CodeGus lançou uma versão nova.
-    Se encontrar, um bloco <em>“Nova versão disponível”</em> aparece nesta tela com um botão
-    <strong>Atualizar agora</strong>.
-  </p>
-
+  <h3>Como fazer login</h3>
   <ol>
-    <li>Abra <strong>Cardápio → aba Sistema</strong>.</li>
-    <li>Você verá a <strong>versão instalada</strong> (ex.: <code>v0.1.2</code>) e a data da última checagem.</li>
-    <li>Para checar na hora, clique em <strong>Verificar atualizações</strong>.</li>
-    <li>Quando aparecer o bloco de nova versão, clique em <strong>Atualizar agora</strong> e confirme.</li>
-    <li>O sistema baixa a nova versão e <strong>reinicia sozinho em poucos segundos</strong>.
-      A página recarrega automaticamente após ~30s.</li>
+    <li>Abra o navegador e vá em <strong>https://sisi.codegus.com</strong>.</li>
+    <li>Digite a senha e clique em <strong>Entrar</strong>.</li>
+    <li>Se você entrou com a <strong>senha de atendente</strong>, vê a tela de fazer pedido e as senhas do dia.</li>
+    <li>Se você entrou com a <strong>senha de admin</strong>, aparece um link <em>Cardápio</em> a mais no topo, dando acesso à edição do menu, relatório e backup.</li>
   </ol>
 
   <div class="dica">
-    <strong>Quando atualizar.</strong> Prefira momentos <strong>sem movimento</strong> (antes de abrir, entre almoço e jantar).
-    Durante a atualização o sistema fica indisponível por alguns segundos — pedidos em andamento não são perdidos,
-    mas ninguém consegue lançar senha nova nesse intervalo.
+    <strong>Sair.</strong> No canto superior direito de qualquer tela há um link <em>Sair</em>.
+    Use quando terminar o expediente ou se emprestar o computador. A sessão dura 30 dias, então
+    normalmente você só precisa digitar a senha uma vez por mês.
   </div>
+
+  <div class="dica">
+    <strong>Painel da TV sem login.</strong> O endereço <code>https://sisi.codegus.com/painel</code>
+    pode ser aberto direto na TV sem digitar senha. Ele só mostra as senhas, cliente não faz nada.
+  </div>
+
+  <h3>Como o sistema é atualizado</h3>
+  <p>
+    Você <strong>não precisa fazer nada</strong>. Como o sistema é online, sempre que a CodeGus publica uma
+    melhoria ou correção, ela fica disponível na mesma hora — basta recarregar a página (F5).
+    Não existe "botão de atualizar", nem download, nem reinstalação.
+  </p>
 
   <h3>Backup — Exportar e Importar dados</h3>
   <p>
