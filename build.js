@@ -103,6 +103,9 @@ console.log('▸ Gerando launchers…');
 //   powershell -WindowStyle Hidden e sai — sem depender de .vbs (associacao
 //   de arquivo .vbs em algumas maquinas do cliente aponta pro navegador e
 //   quebra o atalho). Powershell existe em toda instalacao Windows moderna.
+// Mata instancias velhas do runtime antes de subir nova (evita porta 3000 travada
+// por node.exe fantasma quando o usuario fecha sem sair pelo tray). WMIC filtra
+// pelo caminho do executavel pra nao matar outros node.exe do sistema.
 const launcherBat = `@echo off
 if not "%~1"=="hidden" (
   start "" /b powershell -NoProfile -WindowStyle Hidden -Command "Start-Process -WindowStyle Hidden -FilePath '%~f0' -ArgumentList 'hidden'"
@@ -110,7 +113,11 @@ if not "%~1"=="hidden" (
 )
 cd /d "%~dp0"
 if not exist "data" mkdir data
-"%~dp0runtime\\node.exe" "%~dp0server.cjs"
+for /f "tokens=2 delims=," %%p in ('tasklist /fi "imagename eq node.exe" /fo csv /nh 2^^>NUL ^^| findstr /i /c:"node.exe"') do (
+  wmic process where "ProcessId=%%~p and ExecutablePath like '%%%~dp0runtime%%'" call terminate >NUL 2>&1
+)
+timeout /t 1 /nobreak >NUL
+"%~dp0runtime\\node.exe" "%~dp0server.cjs" >> "%~dp0data\\launcher.log" 2>&1
 `;
 writeFileSync(`${DIST}/launcher.bat`, launcherBat);
 
