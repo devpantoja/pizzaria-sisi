@@ -542,6 +542,73 @@ window.aplicarAtualizacao = async function() {
   }
 };
 
+// ============= Backup =============
+window.exportarBackup = async function() {
+  const btn = $('btnExportarBackup');
+  btn.disabled = true;
+  btn.textContent = 'Gerando…';
+  try {
+    // Nao usa api() porque retorna arquivo, nao JSON
+    const r = await fetch('/api/backup/exportar');
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const blob = await r.blob();
+    const cd = r.headers.get('Content-Disposition') || '';
+    const m = cd.match(/filename="([^"]+)"/);
+    const nome = m ? m[1] : `sisi-backup-${new Date().toISOString().slice(0,10)}.json`;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nome;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast('Backup baixado. Guarde num lugar seguro (Drive, pendrive).', 'sucesso');
+  } catch (e) {
+    toast('Erro ao exportar: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Exportar backup';
+  }
+};
+
+window.importarBackup = async function(ev) {
+  const arq = ev.target.files?.[0];
+  ev.target.value = ''; // permite selecionar o mesmo arquivo de novo
+  if (!arq) return;
+
+  if (!confirm(`Importar "${arq.name}"?\n\nO sistema vai MESCLAR os dados: mantém o que já existe e adiciona/atualiza a partir do backup. Itens com mesmo nome na mesma categoria serão atualizados.`)) return;
+
+  const btn = $('btnImportarBackup');
+  btn.disabled = true;
+  btn.textContent = 'Importando…';
+  try {
+    const texto = await arq.text();
+    let payload;
+    try { payload = JSON.parse(texto); }
+    catch { throw new Error('Arquivo não é um JSON válido'); }
+
+    const r = await api('POST', '/api/backup/importar', payload);
+    const s = r.resumo;
+    const linhas = [
+      `Categorias: ${s.categorias.criadas} novas, ${s.categorias.atualizadas} atualizadas`,
+      `Itens: ${s.itens.criados} novos, ${s.itens.atualizados} atualizados`,
+      `Propagandas: ${s.propagandas.criadas} novas, ${s.propagandas.atualizadas} atualizadas`,
+      `Configurações: ${s.config.chaves}`,
+      `Senhas históricas: ${s.senhas.importadas} importadas, ${s.senhas.ignoradas} ignoradas`,
+      `Pedidos históricos: ${s.pedidos.importados}`,
+    ];
+    alert('Backup importado com sucesso!\n\n' + linhas.join('\n'));
+    await carregar();
+    if ($('secaoPropagandas').style.display !== 'none') await carregarPropagandas();
+  } catch (e) {
+    toast('Erro ao importar: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Importar backup';
+  }
+};
+
 // ============= Boot =============
 conectar();
 carregar();

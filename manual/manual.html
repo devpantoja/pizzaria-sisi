@@ -1078,6 +1078,42 @@
     mas ninguém consegue lançar senha nova nesse intervalo.
   </div>
 
+  <h3>Backup — Exportar e Importar dados</h3>
+  <p>
+    Todo o <strong>cardápio, propagandas, configurações e histórico de pedidos</strong> fica salvo dentro do sistema.
+    Se você <strong>reinstalar o sistema</strong> ou <strong>trocar de computador</strong>, esses dados podem se perder.
+    Por isso o backup existe: exporta um arquivo <code>.json</code> pequeno que guarda tudo.
+  </p>
+
+  <div class="dica">
+    <strong>Faça backup toda semana.</strong> Guarde num lugar seguro: Google Drive, pendrive, e-mail pra você mesmo.
+    <strong>Sempre exporte antes de reinstalar ou atualizar</strong> o sistema.
+  </div>
+
+  <p><strong>Como exportar:</strong></p>
+  <ol>
+    <li>Abra <strong>Cardápio → aba Sistema</strong>.</li>
+    <li>Clique em <strong>Exportar backup</strong>.</li>
+    <li>O navegador baixa um arquivo <code>sisi-backup-AAAA-MM-DD.json</code>.</li>
+    <li>Salve num lugar seguro (Google Drive, pendrive).</li>
+  </ol>
+
+  <p><strong>Como importar (restaurar):</strong></p>
+  <ol>
+    <li>Abra <strong>Cardápio → aba Sistema</strong>.</li>
+    <li>Clique em <strong>Importar backup</strong>.</li>
+    <li>Selecione o arquivo <code>.json</code> salvo antes.</li>
+    <li>Confirme. O sistema mescla os dados: mantém o que já existe e adiciona/atualiza a partir do arquivo.</li>
+    <li>Aparece um resumo com quantas categorias, itens e propagandas foram criadas ou atualizadas.</li>
+  </ol>
+
+  <div class="dica">
+    <strong>Regras do merge.</strong> Itens com o <strong>mesmo nome na mesma categoria</strong>
+    são considerados o mesmo item e serão atualizados (descrição, preços, tamanhos).
+    Categorias e propagandas usam o nome/título como identificador.
+    Histórico de pedidos (senhas antigas) é importado sem duplicar dias.
+  </div>
+
   <h3>Zerar senhas do dia</h3>
   <p>
     Este botão <strong>apaga todas as senhas ativas</strong> (em preparação e prontas) e faz a próxima senha

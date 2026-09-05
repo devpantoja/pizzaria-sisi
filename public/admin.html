@@ -399,6 +399,31 @@
     Durante a atualização, o sistema fica indisponível por alguns segundos enquanto reinicia.
   </div>
 
+  <!-- Backup / Restaurar -->
+  <div style="background: white; border: 1px solid var(--cinza-200); border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+      <div style="flex: 1;">
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--cinza-500); font-weight: 700; margin-bottom: 6px;">Backup</div>
+        <div style="font-size: 16px; font-weight: 700; color: var(--primaria); margin-bottom: 4px;">Exportar / Importar dados</div>
+        <div style="font-size: 12px; color: var(--cinza-500); line-height: 1.5;">
+          Baixa um arquivo <code>.json</code> com todo o cardápio, propagandas, configurações e histórico de pedidos.
+          Guarde numa pasta segura (Google Drive, pendrive, e-mail).
+          <br>
+          <strong style="color: var(--cinza-700);">Antes de reinstalar o sistema, sempre exporte primeiro. Depois importe o arquivo pra restaurar tudo.</strong>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn btn-primario" onclick="exportarBackup()" id="btnExportarBackup" style="white-space: nowrap;">
+          Exportar backup
+        </button>
+        <button class="btn btn-secundario" onclick="document.getElementById('inputBackup').click()" id="btnImportarBackup" style="white-space: nowrap;">
+          Importar backup
+        </button>
+        <input type="file" id="inputBackup" accept="application/json,.json" style="display: none;" onchange="importarBackup(event)">
+      </div>
+    </div>
+  </div>
+
   <!-- Zona perigosa: zerar senhas -->
   <div style="background: white; border: 2px solid #fca5a5; border-radius: 12px; padding: 20px;">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">

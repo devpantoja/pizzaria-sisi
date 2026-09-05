@@ -16,12 +16,14 @@ import {
 } from './propagandas.js';
 import { relatorioDia } from './relatorio.js';
 import { checarAtualizacao, statusUpdate, baixarESubstituir, iniciarAutoCheck } from './updater.js';
+import { exportarBackup, importarBackup } from './backup.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
 
 const app = express();
-app.use(express.json());
+// Backup completo (com historico grande) pode passar de 100kb — sobe pra 50mb.
+app.use(express.json({ limit: '50mb' }));
 app.use(express.static(join(__dirname, 'public')));
 
 app.get('/', (req, res) => res.redirect('/atendente'));
@@ -51,6 +53,27 @@ app.post('/api/versao/atualizar', async (req, res) => {
     res.json({ ...r, mensagem: 'Servidor será reiniciado em alguns segundos' });
   } catch (e) {
     res.status(500).json({ erro: e.message });
+  }
+});
+
+// ============= Backup =============
+app.get('/api/backup/exportar', (req, res) => {
+  const dados = exportarBackup();
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="sisi-backup-${stamp}.json"`);
+  res.send(JSON.stringify(dados, null, 2));
+});
+
+app.post('/api/backup/importar', (req, res) => {
+  try {
+    const resumo = importarBackup(req.body);
+    broadcast({ tipo: 'categoria-alterada' });
+    broadcast({ tipo: 'item-alterado' });
+    broadcast({ tipo: 'propaganda-alterada' });
+    res.json({ ok: true, resumo });
+  } catch (e) {
+    res.status(400).json({ erro: e.message });
   }
 });
 
