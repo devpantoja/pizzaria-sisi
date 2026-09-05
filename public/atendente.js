@@ -204,10 +204,8 @@ function abrirModalItem(item, editandoLinha = null) {
   $('modalItemNome').textContent = item.nome;
   $('modalItemDesc').textContent = item.descricao || '';
 
-  // Meia-meia toggle: só faz sentido se tem 2+ itens disponíveis na mesma categoria com mesmo tamanho
-  const outrosItens = itens.filter(i =>
-    i.id !== item.id && i.categoria_id === item.categoria_id && i.disponivel
-  );
+  // Meia-meia toggle: aparece se existe qualquer outro item disponível
+  const outrosItens = itens.filter(i => i.id !== item.id && i.disponivel);
   const podeMeiaMeia = outrosItens.length > 0;
   const areaMM = $('areaMeiaMeia');
   if (podeMeiaMeia) {
@@ -215,7 +213,7 @@ function abrirModalItem(item, editandoLinha = null) {
       <label class="toggle-meia-meia">
         <input type="checkbox" id="chkMeiaMeia" ${modalCtx.item2 ? 'checked' : ''}>
         <div class="info-mm">Meia a meia
-          <small>Junte 2 sabores da mesma categoria. Preço = o mais caro.</small>
+          <small>Junte 2 sabores no mesmo tamanho. Preço = o mais caro.</small>
         </div>
       </label>
     `;
@@ -263,7 +261,6 @@ function renderModalItem() {
     campoSS.style.display = '';
     const candidatos = itens.filter(i =>
       i.id !== item.id
-      && i.categoria_id === item.categoria_id
       && i.disponivel
       && i.tamanhos.some(t2 => t2.nome === tamanho.nome)
     );
